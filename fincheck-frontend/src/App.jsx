@@ -1,13 +1,15 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Login from './pages/Login'
+// ... outras imports
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        <Route path="/" element={<h1 className="text-2xl text-center mt-10">FinCheck Frontend 🚀</h1>} />
+        <Route path="/" element={<Login />} />
+        {/* depois você adiciona: <Route path="/register" ... /> */}
       </Routes>
-    </BrowserRouter>
+    </Router>
   )
 }
-
 export default App
