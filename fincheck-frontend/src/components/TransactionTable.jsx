@@ -1,5 +1,5 @@
-import React from 'react'
-import clsx from 'clsx'
+import React from "react";
+import clsx from "clsx";
 
 const TransactionTable = ({ transacoes }) => {
   return (
@@ -15,24 +15,29 @@ const TransactionTable = ({ transacoes }) => {
         </thead>
         <tbody>
           {transacoes.map((t) => (
-            <tr key={t.id} className="border-b last:border-none text-sm text-gray-700">
-              <td className="py-2">{t.titulo}</td>
+            <tr
+              key={t.id}
+              className="border-b last:border-none text-sm text-gray-700"
+            >
+              <td className="py-2">{t.title}</td>
               <td
                 className={clsx(
-                  'py-2 font-medium',
-                  t.tipo === 'entrada' ? 'text-green-600' : 'text-red-500'
+                  "py-2 font-medium",
+                  t.type === "entrada" ? "text-green-600" : "text-red-500"
                 )}
               >
-                {t.tipo}
+                {t.type}
               </td>
-              <td className="py-2">R$ {t.valor.toFixed(2)}</td>
-              <td className="py-2">{new Date(t.data).toLocaleDateString()}</td>
+              <td className="py-2">R$ {Number(t.amount).toFixed(2)}</td>
+              <td className="py-2">
+                {new Date(t.createdAt).toLocaleDateString()}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default TransactionTable
+export default TransactionTable;
