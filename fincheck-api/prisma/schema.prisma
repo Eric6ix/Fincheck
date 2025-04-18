@@ -7,20 +7,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum TransactionType {
+  income
+  expense
+}
+
 model User {
   id           String        @id @default(cuid())
   name         String
   email        String        @unique
   password     String
   transactions Transaction[] // 1:N
+  Category     Category[]
 }
 
 model Transaction {
-  id        String   @id @default(cuid())
-  title     String
-  amount    Float
-  type      String // 'income' ou 'expense'
-  createdAt DateTime @default(now())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  id         String           @id @default(cuid())
+  title      String
+  amount     Float
+  type       TransactionType  // Usando o enum aqui
+  createdAt  DateTime         @default(now())
+  userId     String    
+  user       User             @relation(fields: [userId], references: [id])
+  categoryId String?
+  category   Category?        @relation(fields: [categoryId], references: [id])
 }
+
+model Category {
+  id           String        @id @default(cuid())
+  name         String
+  transactions Transaction[]
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+}
+
+
+//npx prisma migrate reset

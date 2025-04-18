@@ -2,23 +2,21 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// POST: http://localhost:3333/api/transactions
-export const createTransaction = async (req, res) => {
-  const { title, amount, type, categoryId} = req.body;
-  const userId = req.user.userId;
+export const createCategory = async (req, res) => {
+  const { name, transactions, user, userId} = req.body;
+  // const userId = req.user.userId;
 
   try {
-    const transaction = await prisma.transaction.create({
-      data: { title, amount: parseFloat(amount), type, userId, categoryId },
+    const category = await prisma.category.create({
+      data: { name, transactions, user, userId },
     });
 
-    res.status(201).json(transaction);
+    res.status(201).json(category);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao criar transação" });
+    res.status(500).json({ error: "Erro ao criar Categoria" });
   }
 };
 
-// GET: http://localhost:3333/api/transactions
 export const getTransactions = async (req, res) => {
   const userId = req.user.userId;
   const { month, year, type } = req.query;
@@ -54,11 +52,9 @@ export const getTransactions = async (req, res) => {
     res.json(transactions);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar transações com filtros" });
-    console.log(error)
   }
 };
 
-// PUT: http://localhost:3333/api/transactions/:id
 export const updateTransaction = async (req, res) => {
   const { id } = req.params;
   const { title, amount, type } = req.body;
@@ -73,7 +69,7 @@ export const updateTransaction = async (req, res) => {
 
     const updated = await prisma.transaction.update({
       where: { id },
-      data: { title, amount: parseFloat(amount), type, categoryId},
+      data: { title, amount: parseFloat(amount), type },
     });
 
     res.json(updated);
@@ -82,7 +78,6 @@ export const updateTransaction = async (req, res) => {
   }
 };
 
-// DELETE: http://localhost:3333/api/transactions/:id
 export const deleteTransaction = async (req, res) => {
   const { id } = req.params;
   const userId = req.user.userId;
@@ -100,7 +95,6 @@ export const deleteTransaction = async (req, res) => {
     res.status(500).json({ error: "Erro ao deletar transação" });
   }
 };
-
 
 export const getSummary = async (req, res) => {
   const userId = req.user.userId;
@@ -121,7 +115,6 @@ export const getSummary = async (req, res) => {
       };
     }
 
-
     const [income, expense] = await Promise.all([
       prisma.transaction.aggregate({
         _sum: { amount: true },
@@ -132,7 +125,6 @@ export const getSummary = async (req, res) => {
         where: { ...dateFilter, type: "expense" },
       }),
     ]);
-
 
     const totalIncome = income._sum.amount || 0;
     const totalExpense = expense._sum.amount || 0;
@@ -147,4 +139,3 @@ export const getSummary = async (req, res) => {
     res.status(500).json({ error: "Erro ao calcular resumo financeiro" });
   }
 };
-
