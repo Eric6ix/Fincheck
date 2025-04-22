@@ -12,12 +12,19 @@ enum TransactionType {
   expense
 }
 
+enum Role {
+  USER
+  ADMIN
+  DEV
+}
+
 model User {
   id           String        @id @default(cuid())
   name         String
   email        String        @unique
   password     String
-  transactions Transaction[] // 1:N
+  role         Role          @default(USER) // 👈 novo campo
+  transactions Transaction[]
   Category     Category[]
 }
 

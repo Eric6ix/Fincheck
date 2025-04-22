@@ -3,139 +3,86 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const createCategory = async (req, res) => {
-  const { name, transactions, user, userId} = req.body;
-  // const userId = req.user.userId;
+  const { name } = req.body;
+  const userId = req.user.userId;
 
   try {
     const category = await prisma.category.create({
-      data: { name, transactions, user, userId },
+      data: {
+        name,
+        userId, // Relaciona corretamente o user via ID
+      },
     });
 
     res.status(201).json(category);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao criar Categoria" });
+    console.error("Erro ao criar categoria:", error);
+    res.status(500).json({ error: "Erro ao criar categoria" });
   }
 };
 
-export const getTransactions = async (req, res) => {
+export const getCategory = async (req, res) => {
   const userId = req.user.userId;
-  const { month, year, type } = req.query;
+  const { name } = req.query; // ← Melhor usar query para GETs
 
   try {
-    // Base do filtro
     const filter = {
-      userId,
+      userId, // ← Busca apenas categorias do usuário autenticado
+      ...(name && { name: { contains: name, mode: "insensitive" } }) // ← Filtro opcional por nome
     };
 
-    // Filtro por tipo (income ou expense)
-    if (type) {
-      filter.type = type;
-    }
-
-    // Filtro por mês e ano
-    if (month && year) {
-      const startDate = new Date(`${year}-${month}-01`);
-      const endDate = new Date(startDate);
-      endDate.setMonth(endDate.getMonth() + 1);
-
-      filter.createdAt = {
-        gte: startDate,
-        lt: endDate,
-      };
-    }
-
-    const transactions = await prisma.transaction.findMany({
+    const categories = await prisma.category.findMany({
       where: filter,
-      orderBy: { createdAt: "desc" },
+      orderBy: { name: "asc" }, // ← Melhor ordenar por nome nesse caso
     });
 
-    res.json(transactions);
+    res.json(categories);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar transações com filtros" });
+    res.status(500).json({ error: "Erro ao buscar categorias" });
+    console.error(error);
   }
 };
 
-export const updateTransaction = async (req, res) => {
+export const updateCategory = async (req, res) => {
   const { id } = req.params;
-  const { title, amount, type } = req.body;
-  const userId = req.user.userId;
+  const { name } = req.body;
 
   try {
-    const existing = await prisma.transaction.findUnique({ where: { id } });
+    const existing = await prisma.category.findUnique({ where: { id } });
 
-    if (!existing || existing.userId !== userId) {
-      return res.status(404).json({ error: "Transação não encontrada" });
+    if (!existing) {
+      return res.status(404).json({ error: "Categoria não encontrada" });
     }
 
-    const updated = await prisma.transaction.update({
+    const updated = await prisma.category.update({
       where: { id },
-      data: { title, amount: parseFloat(amount), type },
+      data: { name },
     });
 
     res.json(updated);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao atualizar transação" });
+    console.error(error);
+    res.status(500).json({ error: "Erro ao atualizar Categoria" });
   }
 };
 
-export const deleteTransaction = async (req, res) => {
+
+export const deleteCategory = async (req, res) => {
   const { id } = req.params;
-  const userId = req.user.userId;
 
   try {
-    const existing = await prisma.transaction.findUnique({ where: { id } });
+    const existing = await prisma.category.findUnique({ where: { id } });
 
-    if (!existing || existing.userId !== userId) {
-      return res.status(404).json({ error: "Transação não encontrada" });
+    if (!existing) {
+      return res.status(404).json({ error: "Categoria não encontrada" });
     }
 
-    await prisma.transaction.delete({ where: { id } });
-    res.status(204).end();
+    await prisma.category.delete({ where: { id } });
+
+    console.log(`Categoria "${existing.name}" deletada com sucesso`);
+    res.status(204).end(); // 204 = No Content
   } catch (error) {
-    res.status(500).json({ error: "Erro ao deletar transação" });
+    res.status(500).json({ error: "Erro ao deletar categoria" });
   }
 };
 
-export const getSummary = async (req, res) => {
-  const userId = req.user.userId;
-  const { month, year } = req.query;
-
-  try {
-    let dateFilter = { userId };
-
-    // Se mês e ano forem fornecidos, aplica filtro de data
-    if (month && year) {
-      const startDate = new Date(`${year}-${month}-01`);
-      const endDate = new Date(startDate);
-      endDate.setMonth(endDate.getMonth() + 1);
-
-      dateFilter.createdAt = {
-        gte: startDate,
-        lt: endDate,
-      };
-    }
-
-    const [income, expense] = await Promise.all([
-      prisma.transaction.aggregate({
-        _sum: { amount: true },
-        where: { ...dateFilter, type: "income" },
-      }),
-      prisma.transaction.aggregate({
-        _sum: { amount: true },
-        where: { ...dateFilter, type: "expense" },
-      }),
-    ]);
-
-    const totalIncome = income._sum.amount || 0;
-    const totalExpense = expense._sum.amount || 0;
-    const balance = totalIncome - totalExpense;
-
-    res.json({
-      totalIncome,
-      totalExpense,
-      balance,
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Erro ao calcular resumo financeiro" });
-  }
-};
