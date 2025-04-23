@@ -11,9 +11,8 @@ enum TransactionType {
   income
   expense
 }
-
-enum Role {
-  USER
+enum UserRole {
+  user
   ADMIN
   DEV
 }
@@ -23,10 +22,11 @@ model User {
   name         String
   email        String        @unique
   password     String
-  role         Role          @default(USER) // 👈 novo campo
+  role         UserRole      @default(user) // 👈 padrão
   transactions Transaction[]
   Category     Category[]
 }
+
 
 model Transaction {
   id         String           @id @default(cuid())

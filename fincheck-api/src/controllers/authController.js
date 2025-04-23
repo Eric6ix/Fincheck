@@ -21,7 +21,7 @@ export const register = async (req, res) => {
 
     // Criar usuário
     const user = await prisma.user.create({
-      data: { name, email, password: hashedPassword },
+      data: { name, email, password: hashedPassword, role:"user" },
     })
 
     res.status(201).json({ message: `Usuário ${user.name} registrado com sucesso!` })
@@ -46,7 +46,7 @@ export const login = async (req, res) => {
     // Gerar token
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '30d' })
 
-    res.json({ token, user: { id: user.id, name: user.name, email: user.email } })
+    res.json({ token, user: { id: user.id, name: user.name, email: user.email, riçe: user.role } })
   } catch (error) {
     res.status(500).json({ error: 'Erro ao fazer login' })
   }
