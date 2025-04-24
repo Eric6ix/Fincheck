@@ -11,6 +11,7 @@ enum TransactionType {
   income
   expense
 }
+
 enum UserRole {
   user
   ADMIN
@@ -50,3 +51,5 @@ model Category {
 
 
 //npx prisma migrate reset
+// npx prisma migrate dev --name add-role-to-user
+

@@ -1,29 +1,19 @@
 import express from "express";
 import {
   getUser,
-  // updateUser,
+  updateUser,
   // deleteUser,
 } from "../controllers/userController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { checkRole } from "../middlewares/checkRole.js";
 import { authorizeRole } from "../middlewares/authorizeRole.js";
 
 const router = express.Router();
+// Rota para DEVS
+router.use(authMiddleware);
+router.get("/", authorizeRole("ADMIN", "DEV"), getUser);
+router.put("/:id", authorizeRole( "DEV"), updateUser);
 
-router.get(
-  "/",
-  authorizeRole,
-  authMiddleware,
-  checkRole(["ADMIN", "DEV"]),
-  getUser
-);
-// router.put(
-//   "/:id",
-//   authorizeRole,
-//   authMiddleware,
-//   checkRole(["ADMIN", "DEV"]),
-//   updateUser
-// );
+
 // router.delete(
 //   "/:id",
 //   authorizeRole,

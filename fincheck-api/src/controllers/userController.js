@@ -1,45 +1,54 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
+
 
 const prisma = new PrismaClient();
 
-
 // GET: http://localhost:3333/api/user
 export const getUser = async (req, res) => {
-  
   try {
-    const user = await prisma.user.findMany({
-      where: filter,
-      orderBy: { createdAt: "desc" },
+    const users = await prisma.user.findMany({
+      orderBy: { name: "asc" }, // ordenando por nome só pra deixar mais organizado
     });
 
-    res.json(user);
+    res.json(users);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar Usuários" });
-    console.log(error)
+    res.status(500).json({ error: "Erro ao buscar usuários" });
+    console.log(error);
   }
 };
 
-// PUT: http://localhost:3333/api/transactions/:id
+// PUT: http://localhost:3333/api/user/:id
 export const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { title, amount, type } = req.body;
-  const userId = req.user.userId;
+  const { name, password, role } = req.body;
+  const requesterId = req.user.userId;
+  const requesterRole = req.user.role;
 
   try {
-    const existing = await prisma.transaction.findUnique({ where: { id } });
+    const existing = await prisma.user.findUnique({ where: { id } });
 
-    if (!existing || existing.userId !== userId) {
-      return res.status(404).json({ error: "Transação não encontrada" });
+    if (!existing) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
-    const updated = await prisma.transaction.update({
+   
+
+    // Prepara os dados a serem atualizados
+    const dataToUpdate = {};
+    if (name) dataToUpdate.name = name;
+    if (role && ["ADMIN", "user", "DEV"].includes(role)) dataToUpdate.role = role;
+    if (password) dataToUpdate.password = await bcrypt.hash(password, 10);
+
+    const updated = await prisma.user.update({
       where: { id },
-      data: { title, amount: parseFloat(amount), type, categoryId},
+      data: dataToUpdate,
     });
 
     res.json(updated);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao atualizar transação" });
+    console.error(error);
+    res.status(500).json({ error: "Erro ao atualizar usuário" });
   }
 };
 
@@ -60,4 +69,4 @@ export const deleteUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Erro ao deletar transação" });
   }
-}
+};
