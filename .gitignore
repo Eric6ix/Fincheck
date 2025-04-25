@@ -2,12 +2,12 @@
 **/node_modules
 **/dist
 **/.next
+**/.env
 
 # Logs
 *.log
 
-# Env files
-**/.env
+
 
 # OS / IDE
 .DS_Store
