@@ -11,7 +11,7 @@ export const getUser = async (req, res) => {
       orderBy: { name: "asc" }, // ordenando por nome só pra deixar mais organizado
     });
 
-    res.json(users);
+    res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar usuários" });
     console.log(error);

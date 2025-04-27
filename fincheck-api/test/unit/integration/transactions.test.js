@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import request from "supertest";
-import app from "../../../src/routes/transactionRoutes"; // ajusta se precisar
+import app from "../../../src/app.js"
+
 
 // Token de teste (pega do Thunder Client ou gera manualmente no login)
 const token =

@@ -31,12 +31,12 @@ export const getCategory = async (req, res) => {
       ...(name && { name: { contains: name, mode: "insensitive" } }) // ← Filtro opcional por nome
     };
 
-    const categories = await prisma.category.findMany({
+    const category = await prisma.category.findMany({
       where: filter,
       orderBy: { name: "asc" }, // ← Melhor ordenar por nome nesse caso
     });
 
-    res.json(categories);
+    res.status(200).json(category)
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar categorias" });
     console.error(error);
