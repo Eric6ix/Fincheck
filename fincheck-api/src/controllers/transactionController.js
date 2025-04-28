@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/prisma.js";
 
 // POST: http://localhost:3333/api/transactions
 export const createTransaction = async (req, res) => {

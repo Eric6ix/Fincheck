@@ -1,7 +1,5 @@
 import { Parser } from 'json2csv';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/prisma.js";
 
 export const exportTransaction = async (req, res) => {
   const userId = req.user.userId;

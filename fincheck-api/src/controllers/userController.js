@@ -1,8 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcryptjs";
-
-
-const prisma = new PrismaClient();
 
 // GET: http://localhost:3333/api/user
 export const getUser = async (req, res) => {
@@ -11,12 +8,13 @@ export const getUser = async (req, res) => {
       orderBy: { name: "asc" }, // ordenando por nome só pra deixar mais organizado
     });
 
-    res.status(200).json(users);
+    res.json(users);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar usuários" });
     console.log(error);
   }
 };
+
 
 // PUT: http://localhost:3333/api/user/:id
 export const updateUser = async (req, res) => {
@@ -32,12 +30,11 @@ export const updateUser = async (req, res) => {
       return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
-   
-
     // Prepara os dados a serem atualizados
     const dataToUpdate = {};
     if (name) dataToUpdate.name = name;
-    if (role && ["ADMIN", "user", "DEV"].includes(role)) dataToUpdate.role = role;
+    if (role && ["ADMIN", "user", "DEV"].includes(role))
+      dataToUpdate.role = role;
     if (password) dataToUpdate.password = await bcrypt.hash(password, 10);
 
     const updated = await prisma.user.update({

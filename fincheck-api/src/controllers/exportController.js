@@ -1,9 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from "../lib/prisma.js";
 import { Parser } from 'json2csv';
 import PDFDocument from 'pdfkit';
 import { Readable } from 'stream';
 
-const prisma = new PrismaClient();
 
 // Gera e envia CSV
 export const exportTransactionCSV = async (req, res) => {

@@ -16,14 +16,17 @@ beforeAll(async () => {
 });
 
 describe("Testes de Usuário", () => {
-  it("deve retornar informações do usuário logado", async () => {
+  it("deve retornar lista de usuários", async () => {
     const response = await request(app)
-      .get("/api/user/") // ajuste aqui conforme sua rota
+      .get("/api/user/") // ajuste conforme sua rota
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("id");
-    expect(response.body).toHaveProperty("name");
-    expect(response.body).toHaveProperty("email");
+    expect(Array.isArray(response.body)).toBe(true); 
+    expect(response.body.length).toBeGreaterThan(0); 
+    expect(response.body[0]).toHaveProperty("id");    
+    expect(response.body[0]).toHaveProperty("name");
+    expect(response.body[0]).toHaveProperty("email");
   });
 });
+
