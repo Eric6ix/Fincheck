@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { fetchTransacoes } from "../services/api";
 import SummaryCards from "../components/SummaryCards";
-import TransactionTable from "../components/TransactionTable";
-import TransactionForm from "../components/TransactionForm";
+import TransactionTable from "../../src/services";
+import TransactionForm from "../../src/services";
 
 const Dashboard = () => {
   const [transacoes, setTransacoes] = useState([]);
