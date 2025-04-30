@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { fetchTransacoes } from "../services/api";
+import { fetchTransactions, createTransaction } from "../services/transactions"; 
 import SummaryCards from "../components/SummaryCards";
-import TransactionTable from "../../src/services";
-import TransactionForm from "../../src/services";
+import TransactionTable from "../components/TransactionTable";
+import TransactionForm from "../components/TransactionForm";
 
 const Dashboard = () => {
   const [transacoes, setTransacoes] = useState([]);
@@ -12,7 +12,7 @@ const Dashboard = () => {
   useEffect(() => {
     const carregarTransacoes = async () => {
       try {
-        const dados = await fetchTransacoes();
+        const dados = await fetchTransaction();
         setTransacoes(dados);
         calcularResumo(dados);
       } catch (err) {
@@ -37,29 +37,14 @@ const Dashboard = () => {
   };
 
   // ➕ Adiciona nova transação via formulário
-  const handleAdicionarTransacao = async (novaTransacao) => {
+  const handleAdicionarTransacao = async (novaTransaction) => {
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch("http://localhost:3333/api/transactions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(novaTransacao),
-      });
-
-      if (res.ok) {
-        const nova = await res.json();
-        const atualizadas = [...transacoes, nova];
-        setTransacoes(atualizadas);
-        calcularResumo(atualizadas);
-      } else {
-        console.error("Erro ao adicionar transação");
-      }
+      const nova = await createTransaction(novaTransaction);
+      const atualizadas = [...transacoes, nova];
+      setTransacoes(atualizadas);
+      calcularResumo(atualizadas);
     } catch (err) {
-      console.error("Erro:", err.message);
+      console.error("Erro ao adicionar transação:", err.message);
     }
   };
 

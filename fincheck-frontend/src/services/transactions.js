@@ -1,18 +1,12 @@
-import api from "./api"; // importa o axios configurado
+// services/transactions.js
+import api from "./api";
 
-export const fetchTransacoes = async () => {
+export const fetchTransactions = async () => {
   const response = await api.get("/transactions");
   return response.data;
 };
 
-export const createTransaction = async ({ title, amount, type, categoryId }) => {
-  const response = await api.post("/transactions", {
-    title,
-    amount,
-    type,
-    categoryId,
-  });
+export const createTransaction = async (novaTransaction) => {
+  const response = await api.post("/transactions", novaTransaction);
   return response.data;
 };
-
-// e você pode ir adicionando outros, tipo deleteTransaction, updateTransaction, etc

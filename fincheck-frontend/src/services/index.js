@@ -1,5 +1,4 @@
-export * from "./api";
 export * from "./transactions";
-export * from "./categories";
+export * from "./category";
 export * from "./users";
 export * from "./auth";
