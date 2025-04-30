@@ -12,7 +12,7 @@ const Dashboard = () => {
   useEffect(() => {
     const carregarTransacoes = async () => {
       try {
-        const dados = await fetchTransaction();
+        const dados = await fetchTransactions();
         setTransacoes(dados);
         calcularResumo(dados);
       } catch (err) {
