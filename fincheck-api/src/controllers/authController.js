@@ -33,7 +33,7 @@ export const register = async (req, res) => {
   }
 };
 
-
+    // Gera e salva o Refresh Token
 export const refreshToken = async (req, res) => {
   const token = req.cookies?.refreshToken;
 

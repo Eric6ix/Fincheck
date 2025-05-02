@@ -7,6 +7,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  password      String
+  role          UserRole       @default(user)
+  transactions  Transaction[]
+  Category      Category[]
+  refreshTokens RefreshToken[] // 🔐 relação com refresh tokens
+}
+
+model Transaction {
+  id         String          @id @default(cuid())
+  title      String
+  amount     Float
+  type       TransactionType
+  createdAt  DateTime        @default(now())
+  userId     String
+  user       User            @relation(fields: [userId], references: [id])
+  categoryId String?
+  category   Category?       @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id           String        @id @default(cuid())
+  name         String
+  transactions Transaction[]
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
 enum TransactionType {
   income
   expense
@@ -18,38 +58,5 @@ enum UserRole {
   DEV
 }
 
-model User {
-  id           String        @id @default(cuid())
-  name         String
-  email        String        @unique
-  password     String
-  role         UserRole      @default(user) // 👈 padrão
-  transactions Transaction[]
-  Category     Category[]
-}
-
-
-model Transaction {
-  id         String           @id @default(cuid())
-  title      String
-  amount     Float
-  type       TransactionType  // Usando o enum aqui
-  createdAt  DateTime         @default(now())
-  userId     String    
-  user       User             @relation(fields: [userId], references: [id])
-  categoryId String?
-  category   Category?        @relation(fields: [categoryId], references: [id])
-}
-
-model Category {
-  id           String        @id @default(cuid())
-  name         String
-  transactions Transaction[]
-  userId       String
-  user         User          @relation(fields: [userId], references: [id])
-}
-
-
 //npx prisma migrate reset
 // npx prisma migrate dev --name add-role-to-user
-
