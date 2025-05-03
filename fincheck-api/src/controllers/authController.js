@@ -1,11 +1,9 @@
-import { generateRefreshToken } from "../../test/utils/tokens.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { prisma } from "../lib/prisma.js";
 
 dotenv.config();
-
 
 export const register = async (req, res) => {
   try {
@@ -21,7 +19,7 @@ export const register = async (req, res) => {
 
     // Criar usuário
     const user = await prisma.user.create({
-      data: { name, email, password: hashedPassword, role:"user" },
+      data: { name, email, password: hashedPassword, role: "user" },
     });
 
     res
@@ -33,22 +31,6 @@ export const register = async (req, res) => {
   }
 };
 
-    // Gera e salva o Refresh Token
-export const refreshToken = async (req, res) => {
-  const token = req.cookies?.refreshToken;
-
-  if (!token) return res.status(401).json({ error: "Token ausente" });
-
-  try {
-    const decoded = jwt.verify(token, process.env.REFRESH_SECRET);
-
-    const newAccessToken = generateAccessToken(decoded.userId);
-
-    res.json({ token: newAccessToken });
-  } catch (err) {
-    res.status(403).json({ error: "Token inválido ou expirado" });
-  }
-};
 
 
 export const login = async (req, res) => {
@@ -63,19 +45,15 @@ export const login = async (req, res) => {
     if (!validPassword)
       return res.status(400).json({ error: "E-mail ou senha inválidos!" });
 
-    // Access Token com expiração curta
     const token = jwt.sign(
       { userId: user.id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1m" }
+      { expiresIn: "1D" }
     );
 
-    // Gera e salva o Refresh Token
-    const refreshToken = await generateRefreshToken(user.id);
 
-    res.json({
+    return res.json({
       token,
-      refreshToken, // envia para o frontend
       user: {
         id: user.id,
         name: user.name,
