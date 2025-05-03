@@ -33,26 +33,29 @@ export const register = async (req, res) => {
 
 
 
+
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Buscar usuário no banco
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user)
       return res.status(400).json({ error: "E-mail ou senha inválidos!" });
 
+    // Verificar senha
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword)
       return res.status(400).json({ error: "E-mail ou senha inválidos!" });
 
+    // Gerar token
     const token = jwt.sign(
       { userId: user.id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1D" }
+      { expiresIn: "30d" }
     );
 
-
-    return res.json({
+    res.json({
       token,
       user: {
         id: user.id,
@@ -62,7 +65,6 @@ export const login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Erro ao fazer login" });
   }
 };

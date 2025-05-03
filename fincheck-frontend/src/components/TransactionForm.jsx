@@ -9,10 +9,9 @@ const TransactionForm = ({ onAdd }) => {
     e.preventDefault();
 
     const novaTransacao = {
-      titulo,
-      valor: parseFloat(valor),
-      tipo,
-      data: new Date().toISOString(),
+      title: titulo,
+      amount: parseFloat(valor),
+      type: tipo,
     };
 
     onAdd(novaTransacao); // Callback para a dashboard
@@ -20,9 +19,11 @@ const TransactionForm = ({ onAdd }) => {
     setValor("");
     setTipo("entrada");
   };
-
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow p-6 mb-6">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white rounded-2xl shadow p-6 mb-6"
+    >
       <h2 className="text-xl font-semibold mb-4">Nova Transação</h2>
       <div className="grid md:grid-cols-3 gap-4 mb-4">
         <input
@@ -46,8 +47,8 @@ const TransactionForm = ({ onAdd }) => {
           onChange={(e) => setTipo(e.target.value)}
           className="border rounded-lg p-2"
         >
-          <option value="entrada">Entrada</option>
-          <option value="saída">Saída</option>
+          <option value="income">Entrada</option>
+          <option value="expense">Saída</option>
         </select>
       </div>
       <button
