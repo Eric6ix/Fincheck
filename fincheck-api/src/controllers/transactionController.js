@@ -93,6 +93,7 @@ export const deleteTransaction = async (req, res) => {
     }
 
     await prisma.transaction.delete({ where: { id } });
+    res.json("Deletado com sucesso!");
     res.status(204).end();
   } catch (error) {
     res.status(500).json({ error: "Erro ao deletar transação" });

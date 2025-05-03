@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { fetchTransactions, createTransaction } from "../services/transactions"; 
+import { fetchTransactions, createTransaction } from "../services/transactions";
 import SummaryCards from "../components/SummaryCards";
 import TransactionTable from "../components/TransactionTable";
 import TransactionForm from "../components/TransactionForm";
+import { deleteTransaction } from "../services/transactions";
 
 const Dashboard = () => {
   const [transacoes, setTransacoes] = useState([]);
@@ -48,6 +49,15 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteTransaction = async (id) => {
+    try {
+      await deleteTransaction(id);
+      setTransacoes((prev) => prev.filter((tx) => tx.id !== id));
+    } catch (error) {
+      console.error("Erro ao deletar transação:", error);
+    }
+  };
+
   // 🔒 Logout limpa o token e redireciona
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -64,6 +74,12 @@ const Dashboard = () => {
         >
           Sair
         </button>
+        <button
+          onClick={() => handleDeleteTransaction(transacao.id)}
+          className="text-red-600 hover:underline ml-2"
+        >
+          Excluir
+        </button>
       </div>
 
       {/* Cartões de resumo */}
@@ -73,7 +89,10 @@ const Dashboard = () => {
       <TransactionForm onAdd={handleAdicionarTransacao} />
 
       {/* Tabela de transações */}
-      <TransactionTable transacoes={transacoes} />
+      <TransactionTable
+        transacoes={transacoes}
+        onDelete={handleDeleteTransaction}
+      />
     </main>
   );
 };
