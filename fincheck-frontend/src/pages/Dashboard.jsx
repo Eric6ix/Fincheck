@@ -74,12 +74,6 @@ const Dashboard = () => {
         >
           Sair
         </button>
-        <button
-          onClick={() => handleDeleteTransaction(transacao.id)}
-          className="text-red-600 hover:underline ml-2"
-        >
-          Excluir
-        </button>
       </div>
 
       {/* Cartões de resumo */}

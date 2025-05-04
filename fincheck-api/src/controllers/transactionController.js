@@ -2,7 +2,7 @@ import { prisma } from "../lib/prisma.js";
 
 // POST: http://localhost:3333/api/transactions
 export const createTransaction = async (req, res) => {
-  const { title, amount, type, categoryId} = req.body;
+  const { title, amount, type, categoryId } = req.body;
   const userId = req.user.userId;
 
   try {
@@ -52,26 +52,35 @@ export const getTransactions = async (req, res) => {
     res.json(transactions);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar transações com filtros" });
-    console.log(error)
+    console.log(error);
   }
 };
 
 // PUT: http://localhost:3333/api/transactions/:id
 export const updateTransaction = async (req, res) => {
   const { id } = req.params;
-  const { title, amount, type } = req.body;
+  const { title, amount, type, categoryId } = req.body;
   const userId = req.user.userId;
 
   try {
     const existing = await prisma.transaction.findUnique({ where: { id } });
 
+    if (!title || !amount || !type) {
+      return res
+        .status(400)
+        .json({ error: "Preencha todos os campos obrigatórios." });
+    }
+
     if (!existing || existing.userId !== userId) {
       return res.status(404).json({ error: "Transação não encontrada" });
+    }
+    if (!["income", "expense"].includes(type)) {
+      return res.status(400).json({ error: "Tipo de transação inválido." });
     }
 
     const updated = await prisma.transaction.update({
       where: { id },
-      data: { title, amount: parseFloat(amount), type, categoryId},
+      data: { title, amount: parseFloat(amount), type, categoryId },
     });
 
     res.json(updated);
@@ -100,7 +109,6 @@ export const deleteTransaction = async (req, res) => {
   }
 };
 
-
 export const getSummary = async (req, res) => {
   const userId = req.user.userId;
   const { month, year } = req.query;
@@ -120,7 +128,6 @@ export const getSummary = async (req, res) => {
       };
     }
 
-
     const [income, expense] = await Promise.all([
       prisma.transaction.aggregate({
         _sum: { amount: true },
@@ -131,7 +138,6 @@ export const getSummary = async (req, res) => {
         where: { ...dateFilter, type: "expense" },
       }),
     ]);
-
 
     const totalIncome = income._sum.amount || 0;
     const totalExpense = expense._sum.amount || 0;
@@ -146,4 +152,3 @@ export const getSummary = async (req, res) => {
     res.status(500).json({ error: "Erro ao calcular resumo financeiro" });
   }
 };
-
