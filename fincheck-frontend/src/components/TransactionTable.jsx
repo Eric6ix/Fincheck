@@ -1,7 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 
-const TransactionTable = ({ transacoes, onDelete }) => {
+const TransactionTable = ({ transacoes, onEdit }) => {
   return (
     <div className="overflow-x-auto bg-white rounded-2xl shadow p-6">
       <table className="min-w-full">
@@ -32,6 +32,13 @@ const TransactionTable = ({ transacoes, onDelete }) => {
               <td className="py-2">
                 {new Date(t.createdAt).toLocaleDateString()}
               </td>
+              <button
+                onClick={() => onEdit(t)}
+                className="text-blue-600 hover:underline"
+              >
+                Editar
+              </button>
+
               <td className="py-2">
                 <button
                   onClick={() => onDelete(t.id)}

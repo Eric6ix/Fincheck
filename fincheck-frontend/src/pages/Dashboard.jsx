@@ -4,6 +4,10 @@ import SummaryCards from "../components/SummaryCards";
 import TransactionTable from "../components/TransactionTable";
 import TransactionForm from "../components/TransactionForm";
 import { deleteTransaction } from "../services/transactions";
+import EditTransactionModal from "../components/EditTransactionModal";
+
+const [modalAberto, setModalAberto] = useState(false);
+const [transacaoSelecionada, setTransacaoSelecionada] = useState(null);
 
 const Dashboard = () => {
   const [transacoes, setTransacoes] = useState([]);
@@ -49,6 +53,15 @@ const Dashboard = () => {
     }
   };
 
+  const handleAtualizarTransacao = async (dadosAtualizados) => {
+    try {
+      await api.put(`/transactions/${dadosAtualizados.id}`, dadosAtualizados);
+      buscarTransacoes(); // atualiza a lista
+    } catch (err) {
+      console.error("Erro ao atualizar transação:", err);
+    }
+  };
+
   const handleDeleteTransaction = async (id) => {
     try {
       await deleteTransaction(id);
@@ -86,6 +99,12 @@ const Dashboard = () => {
       <TransactionTable
         transacoes={transacoes}
         onDelete={handleDeleteTransaction}
+      />
+      <EditTransactionModal
+        isOpen={modalAberto}
+        onClose={() => setModalAberto(false)}
+        transaction={transacaoSelecionada}
+        onUpdate={handleAtualizarTransacao}
       />
     </main>
   );
