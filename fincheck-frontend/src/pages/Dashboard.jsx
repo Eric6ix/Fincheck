@@ -5,27 +5,27 @@ import TransactionTable from "../components/TransactionTable";
 import TransactionForm from "../components/TransactionForm";
 import { deleteTransaction } from "../services/transactions";
 import EditTransactionModal from "../components/EditTransactionModal";
-
-const [modalAberto, setModalAberto] = useState(false);
-const [transacaoSelecionada, setTransacaoSelecionada] = useState(null);
+import api from "../services/api";
 
 const Dashboard = () => {
   const [transacoes, setTransacoes] = useState([]);
   const [resumo, setResumo] = useState({ entradas: 0, saidas: 0 });
+  const [modalAberto, setModalAberto] = useState(false);
+  const [transacaoSelecionada, setTransacaoSelecionada] = useState(null);
+
+  const buscarTransacoes = async () => {
+    try {
+      const dados = await fetchTransactions();
+      setTransacoes(dados);
+      calcularResumo(dados);
+    } catch (err) {
+      console.error("Erro ao carregar transações:", err.message);
+    }
+  };
 
   // 🔁 Carrega as transações da API ao iniciar
   useEffect(() => {
-    const carregarTransacoes = async () => {
-      try {
-        const dados = await fetchTransactions();
-        setTransacoes(dados);
-        calcularResumo(dados);
-      } catch (err) {
-        console.error("Erro ao carregar transações:", err.message);
-      }
-    };
-
-    carregarTransacoes();
+    buscarTransacoes();
   }, []);
 
   // 🧮 Recalcula o resumo de entradas/saídas
@@ -71,6 +71,11 @@ const Dashboard = () => {
     }
   };
 
+  const handleAbrirModal = (transacao) => {
+    setTransacaoSelecionada(transacao);
+    setModalAberto(true);
+  };
+
   // 🔒 Logout limpa o token e redireciona
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -99,6 +104,7 @@ const Dashboard = () => {
       <TransactionTable
         transacoes={transacoes}
         onDelete={handleDeleteTransaction}
+        onEdit={handleAbrirModal}
       />
       <EditTransactionModal
         isOpen={modalAberto}
