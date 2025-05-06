@@ -109,6 +109,35 @@ export const deleteTransaction = async (req, res) => {
   }
 };
 
+// GET: /api/transactions?startDate=2024-01-01&endDate=2024-01-31&categoryId=abc123
+export const getAllTransactions = async (req, res) => {
+  const userId = req.user.userId;
+  const { startDate, endDate, categoryId } = req.query;
+
+  try {
+    const where = {
+      userId,
+      ...(startDate &&
+        endDate && {
+          createdAt: {
+            gte: new Date(startDate),
+            lte: new Date(endDate),
+          },
+        }),
+      ...(categoryId && { categoryId }),
+    };
+
+    const transactions = await prisma.transaction.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.json(transactions);
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao buscar transações" });
+  }
+};
+
 export const getSummary = async (req, res) => {
   const userId = req.user.userId;
   const { month, year } = req.query;

@@ -33,13 +33,16 @@ const Dashboard = () => {
     const entradas = transacoes
       .filter((t) => t.type === "entrada")
       .reduce((acc, t) => acc + t.amount, 0);
-
+  
     const saidas = transacoes
       .filter((t) => t.type === "saída")
       .reduce((acc, t) => acc + t.amount, 0);
-
-    setResumo({ entradas, saidas });
+  
+    const saldo = entradas - saidas;
+  
+    setResumo({ entradas, saidas, saldo });
   };
+  
 
   // ➕ Adiciona nova transação via formulário
   const handleAdicionarTransacao = async (novaTransaction) => {

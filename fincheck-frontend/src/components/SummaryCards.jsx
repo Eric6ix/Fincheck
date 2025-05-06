@@ -1,5 +1,5 @@
-import React from 'react'
-import { FaArrowDown, FaArrowUp, FaDollarSign } from 'react-icons/fa'
+import React from "react";
+import { FaArrowDown, FaArrowUp, FaDollarSign } from "react-icons/fa";
 
 const SummaryCards = ({ resumo }) => {
   return (
@@ -30,11 +30,11 @@ const SummaryCards = ({ resumo }) => {
           <FaDollarSign className="text-blue-500 text-xl" />
         </div>
         <h2 className="text-2xl font-bold text-blue-600 mt-2">
-          R$ {(resumo.entradas - resumo.saidas).toFixed(2)}
+          R$ {(resumo.saldo || 0).toFixed(2)}
         </h2>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SummaryCards
+export default SummaryCards;
