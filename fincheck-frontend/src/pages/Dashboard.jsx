@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
-import { fetchTransactions, createTransaction } from "../services/transactions";
+import { fetchTransactions, createTransaction, deleteTransaction } from "../services/transactions";
 import SummaryCards from "../components/SummaryCards";
 import TransactionTable from "../components/TransactionTable";
 import TransactionForm from "../components/TransactionForm";
-import { deleteTransaction } from "../services/transactions";
 import EditTransactionModal from "../components/EditTransactionModal";
 import api from "../services/api";
 
 const Dashboard = () => {
   const [transacoes, setTransacoes] = useState([]);
-  const [resumo, setResumo] = useState({ entradas: 0, saidas: 0 });
+  const [resumo, setResumo] = useState({ entradas: 0, saidas: 0, saldo: 0 });
   const [modalAberto, setModalAberto] = useState(false);
   const [transacaoSelecionada, setTransacaoSelecionada] = useState(null);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   const buscarTransacoes = async () => {
     try {
@@ -23,28 +24,44 @@ const Dashboard = () => {
     }
   };
 
-  // 🔁 Carrega as transações da API ao iniciar
+  const buscarTransacoesComFiltro = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (startDate) params.append("startDate", startDate);
+      if (endDate) params.append("endDate", endDate);
+
+      const res = await api.get(`/transactions?${params.toString()}`);
+      setTransacoes(res.data);
+      calcularResumo(res.data);
+    } catch (err) {
+      console.error("Erro ao filtrar transações:", err.message);
+    }
+  };
+
+  const limparFiltro = () => {
+    setStartDate('');
+    setEndDate('');
+    buscarTransacoes();
+  };
+
   useEffect(() => {
     buscarTransacoes();
   }, []);
 
-  // 🧮 Recalcula o resumo de entradas/saídas
   const calcularResumo = (transacoes) => {
     const entradas = transacoes
       .filter((t) => t.type === "entrada")
       .reduce((acc, t) => acc + t.amount, 0);
-  
+
     const saidas = transacoes
       .filter((t) => t.type === "saída")
       .reduce((acc, t) => acc + t.amount, 0);
-  
+
     const saldo = entradas - saidas;
-  
+
     setResumo({ entradas, saidas, saldo });
   };
-  
 
-  // ➕ Adiciona nova transação via formulário
   const handleAdicionarTransacao = async (novaTransaction) => {
     try {
       const nova = await createTransaction(novaTransaction);
@@ -59,7 +76,7 @@ const Dashboard = () => {
   const handleAtualizarTransacao = async (dadosAtualizados) => {
     try {
       await api.put(`/transactions/${dadosAtualizados.id}`, dadosAtualizados);
-      buscarTransacoes(); // atualiza a lista
+      buscarTransacoes();
     } catch (err) {
       console.error("Erro ao atualizar transação:", err);
     }
@@ -79,10 +96,9 @@ const Dashboard = () => {
     setModalAberto(true);
   };
 
-  // 🔒 Logout limpa o token e redireciona
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login"; // redireciona
+    window.location.href = "/login";
   };
 
   return (
@@ -100,6 +116,40 @@ const Dashboard = () => {
       {/* Cartões de resumo */}
       <SummaryCards resumo={resumo} />
 
+      {/* Filtros por período */}
+      <div className="flex gap-4 items-end mb-4">
+        <div>
+          <label className="block text-sm text-gray-600">De:</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="border rounded px-2 py-1"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-600">Até:</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="border rounded px-2 py-1"
+          />
+        </div>
+        <button
+          onClick={buscarTransacoesComFiltro}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Filtrar
+        </button>
+        <button
+          onClick={limparFiltro}
+          className="bg-gray-400 text-white px-4 py-2 rounded"
+        >
+          Limpar
+        </button>
+      </div>
+
       {/* Formulário de nova transação */}
       <TransactionForm onAdd={handleAdicionarTransacao} />
 
@@ -109,6 +159,8 @@ const Dashboard = () => {
         onDelete={handleDeleteTransaction}
         onEdit={handleAbrirModal}
       />
+
+      {/* Modal de edição */}
       <EditTransactionModal
         isOpen={modalAberto}
         onClose={() => setModalAberto(false)}
