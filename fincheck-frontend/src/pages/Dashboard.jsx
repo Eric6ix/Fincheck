@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { fetchTransactions, createTransaction, deleteTransaction } from "../services/transactions";
+import {
+  fetchTransactions,
+  createTransaction,
+  deleteTransaction,
+} from "../services/transactions";
 import SummaryCards from "../components/SummaryCards";
 import TransactionTable from "../components/TransactionTable";
 import TransactionForm from "../components/TransactionForm";
@@ -11,8 +15,10 @@ const Dashboard = () => {
   const [resumo, setResumo] = useState({ entradas: 0, saidas: 0, saldo: 0 });
   const [modalAberto, setModalAberto] = useState(false);
   const [transacaoSelecionada, setTransacaoSelecionada] = useState(null);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [categorias, setCategorias] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const buscarTransacoes = async () => {
     try {
@@ -39,14 +45,24 @@ const Dashboard = () => {
   };
 
   const limparFiltro = () => {
-    setStartDate('');
-    setEndDate('');
+    setStartDate("");
+    setEndDate("");
     buscarTransacoes();
   };
 
   useEffect(() => {
     buscarTransacoes();
+    buscarCategorias();
   }, []);
+
+  const buscarCategorias = async () => {
+    try {
+      const res = await api.get("/categories");
+      setCategorias(res.data);
+    } catch (err) {
+      console.error("Erro ao buscar categorias:", err.message);
+    }
+  };
 
   const calcularResumo = (transacoes) => {
     const entradas = transacoes
@@ -148,6 +164,21 @@ const Dashboard = () => {
         >
           Limpar
         </button>
+        <div>
+          <label className="block text-sm text-gray-600">Categoria:</label>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="border rounded px-2 py-1"
+          >
+            <option value="">Todas</option>
+            {categorias.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Formulário de nova transação */}

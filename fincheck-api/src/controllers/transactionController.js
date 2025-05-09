@@ -135,7 +135,7 @@ export const getAllTransactions = async (req, res) => {
             lte: new Date(endDate),
           },
         }),
-      ...(categoryId && { categoryId }),
+      ...(categoryId && { categoryId: parseInt(categoryId) }),
     };
 
     const transactions = await prisma.transaction.findMany({
