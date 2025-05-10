@@ -21,7 +21,7 @@ export const createCategory = async (req, res) => {
 
 export const getCategory = async (req, res) => {
   const userId = req.user.userId;
-  const { name } = req.query; // ← Melhor usar query para GETs
+  const { name } = req.query;
 
   try {
     const filter = {

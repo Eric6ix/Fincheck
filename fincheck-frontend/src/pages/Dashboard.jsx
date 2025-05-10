@@ -35,6 +35,7 @@ const Dashboard = () => {
       const params = new URLSearchParams();
       if (startDate) params.append("startDate", startDate);
       if (endDate) params.append("endDate", endDate);
+      if (selectedCategory) params.append("categoryId", selectedCategory);
 
       const res = await api.get(`/transactions?${params.toString()}`);
       setTransacoes(res.data);
@@ -57,8 +58,9 @@ const Dashboard = () => {
 
   const buscarCategorias = async () => {
     try {
-      const res = await api.get("/categories");
+      const res = await api.get("/category");
       setCategorias(res.data);
+      console.log(categorias);
     } catch (err) {
       console.error("Erro ao buscar categorias:", err.message);
     }
@@ -79,7 +81,7 @@ const Dashboard = () => {
   };
 
   const handleAdicionarTransacao = async (novaTransaction) => {
-    try {
+    try {""
       const nova = await createTransaction(novaTransaction);
       const atualizadas = [...transacoes, nova];
       setTransacoes(atualizadas);
