@@ -30,40 +30,36 @@ export const register = async (req, res) => {
     console.log(error);
   }
 };
-
-
-
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Buscar usuário no banco
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user)
-      return res.status(400).json({ error: "E-mail ou senha inválidos!" });
+    if (!user) return res.status(400).json({ error: "Credenciais inválidas" });
 
-    // Verificar senha
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword)
-      return res.status(400).json({ error: "E-mail ou senha inválidos!" });
+      return res.status(400).json({ error: "Credenciais inválidas" });
 
-    // Gerar token
     const token = jwt.sign(
       { userId: user.id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "1m" }
     );
 
+    const refreshToken = jwt.sign(
+      { userId: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
-const refreshToken = crypto.randomUUID(); // ou usar uuid
-await prisma.refreshToken.create({
-  data: {
-    token: refreshToken,
-    userId: user.id,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 dias
-  },
-});
-
+    await prisma.refreshToken.create({
+      data: {
+        token: refreshToken,
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
 
     res.json({
       token,
@@ -80,21 +76,28 @@ await prisma.refreshToken.create({
   }
 };
 
+
 export const refreshTokenHandler = async (req, res) => {
   const { refreshToken } = req.body;
 
-  if (!refreshToken) return res.status(400).json({ error: 'Token ausente' });
+  if (!refreshToken) return res.status(400).json({ error: "Token ausente" });
 
-  const storedToken = await prisma.refreshToken.findUnique({ where: { token: refreshToken } });
+  const storedToken = await prisma.refreshToken.findUnique({
+    where: { token: refreshToken },
+  });
   if (!storedToken || new Date() > storedToken.expiresAt) {
-    return res.status(401).json({ error: 'Refresh token inválido ou expirado' });
+    return res
+      .status(401)
+      .json({ error: "Refresh token inválido ou expirado" });
   }
 
-  const user = await prisma.user.findUnique({ where: { id: storedToken.userId } });
+  const user = await prisma.user.findUnique({
+    where: { id: storedToken.userId },
+  });
   const newAccessToken = jwt.sign(
     { userId: user.id, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: '1m' }
+    { expiresIn: "1m" }
   );
 
   res.json({ token: newAccessToken });
