@@ -129,6 +129,26 @@ const Dashboard = () => {
     console.error("Erro ao exportar PDF:", error);
   }
 };
+const handleExportCSV = async () => {
+  try {
+    const response = await api.get("/transactions/export/csv", {
+      responseType: "blob",
+    });
+
+    const blob = new Blob([response.data], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "transacoes.csv");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    console.error("Erro ao exportar CSV:", error);
+  }
+};
+
 
   const handleAbrirModal = (transacao) => {
     setTransacaoSelecionada(transacao);
@@ -156,6 +176,13 @@ const Dashboard = () => {
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
         >
           Exportar PDF
+        </button>
+
+        <button
+          onClick={handleExportCSV}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+        >
+          Exportar CSV
         </button>
       </div>
 

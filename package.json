@@ -1,8 +1,4 @@
 {
-<<<<<<< HEAD
-  "dependencies": {
-    "json2csv": "^6.0.0-alpha.2"
-=======
   "name": "fincheck-api",
   "version": "1.0.0",
   "type": "module",
@@ -23,7 +19,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "nodemon": "^3.1.9",
-    "prisma": "^6.5.0"
->>>>>>> 7973a86 (Integração de CRUD com token)
+    "prisma": "^6.5.0",
+    "json2csv": "^6.0.0-alpha.2"
   }
 }

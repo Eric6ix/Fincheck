@@ -1,5 +1,6 @@
 import { prisma } from "../lib/prisma.js";
 import PDFDocument from "pdfkit";
+import {Parser} from "json2csv"
 
 // POST: http://localhost:3333/api/transactions
 export const createTransaction = async (req, res) => {
@@ -197,10 +198,11 @@ export const getSummary = async (req, res) => {
 
 export const exportTransactionsPDF = async (req, res) => {
   const userId = req.user.userId;
+  const name = req.user.name;
 
   try {
     const transactions = await prisma.transaction.findMany({
-      where: { userId },
+      where: { userId, name }, 
       include: { category: true },
       orderBy: { createdAt: "desc" },
     });
@@ -217,6 +219,7 @@ export const exportTransactionsPDF = async (req, res) => {
       doc
         .fontSize(12)
         .text(`Título: ${tx.title}`)
+        .text(`Nome: ${tx.name}`)
         .text(`Valor: R$ ${tx.amount.toFixed(2)}`)
         .text(`Tipo: ${tx.type === "income" ? "Entrada" : "Saída"}`)
         .text(`Categoria: ${tx.category?.name || "Sem categoria"}`)
@@ -228,5 +231,37 @@ export const exportTransactionsPDF = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao gerar PDF" });
+  }
+};
+
+
+export const exportTransactionsCSV = async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    const transactions = await prisma.transaction.findMany({
+      where: { userId },
+      include: { category: true },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // Mapeia os dados no formato que será exportado
+    const csvData = transactions.map((tx) => ({
+      Título: tx.title,
+      Valor: tx.amount.toFixed(2),
+      Tipo: tx.type === 'income' ? 'Entrada' : 'Saída',
+      Categoria: tx.category?.name || 'Sem categoria',
+      Data: new Date(tx.createdAt).toLocaleDateString('pt-BR'),
+    }));
+
+    const parser = new Parser();
+    const csv = parser.parse(csvData);
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=transacoes.csv');
+    res.send(csv);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao gerar CSV' });
   }
 };

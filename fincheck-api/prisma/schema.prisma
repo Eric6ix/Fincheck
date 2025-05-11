@@ -15,7 +15,6 @@ model User {
   role          UserRole       @default(user)
   transactions  Transaction[]
   Category      Category[]
-  refreshTokens RefreshToken[] // 🔐 relação com refresh tokens
 }
 
 model Transaction {
@@ -38,14 +37,6 @@ model Category {
   user         User          @relation(fields: [userId], references: [id])
 }
 
-model RefreshToken {
-  id        String   @id @default(cuid())
-  token     String   @unique
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-}
 
 enum TransactionType {
   income
