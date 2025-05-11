@@ -1,4 +1,5 @@
 import { prisma } from "../lib/prisma.js";
+import PDFDocument from "pdfkit";
 
 // POST: http://localhost:3333/api/transactions
 export const createTransaction = async (req, res) => {
@@ -190,5 +191,42 @@ export const getSummary = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: "Erro ao calcular resumo financeiro" });
+  }
+};
+
+
+export const exportTransactionsPDF = async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    const transactions = await prisma.transaction.findMany({
+      where: { userId },
+      include: { category: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const doc = new PDFDocument();
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=transacoes.pdf");
+    doc.pipe(res);
+
+    doc.fontSize(16).text("Relatório de Transações", { align: "center" });
+    doc.moveDown();
+
+    transactions.forEach((tx) => {
+      doc
+        .fontSize(12)
+        .text(`Título: ${tx.title}`)
+        .text(`Valor: R$ ${tx.amount.toFixed(2)}`)
+        .text(`Tipo: ${tx.type === "income" ? "Entrada" : "Saída"}`)
+        .text(`Categoria: ${tx.category?.name || "Sem categoria"}`)
+        .text(`Data: ${new Date(tx.createdAt).toLocaleDateString()}`)
+        .moveDown();
+    });
+
+    doc.end();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao gerar PDF" });
   }
 };

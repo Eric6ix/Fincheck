@@ -81,7 +81,8 @@ const Dashboard = () => {
   };
 
   const handleAdicionarTransacao = async (novaTransaction) => {
-    try {""
+    try {
+      ("");
       const nova = await createTransaction(novaTransaction);
       const atualizadas = [...transacoes, nova];
       setTransacoes(atualizadas);
@@ -109,6 +110,26 @@ const Dashboard = () => {
     }
   };
 
+  const handleExportPDF = async () => {
+  try {
+    const response = await api.get("/transactions/export/pdf", {
+      responseType: "blob", // importante para baixar arquivo binário
+    });
+
+    const blob = new Blob([response.data], { type: "application/pdf" });
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "transacoes.pdf");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    console.error("Erro ao exportar PDF:", error);
+  }
+};
+
   const handleAbrirModal = (transacao) => {
     setTransacaoSelecionada(transacao);
     setModalAberto(true);
@@ -128,6 +149,13 @@ const Dashboard = () => {
           className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
         >
           Sair
+        </button>
+
+        <button
+          onClick={handleExportPDF}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+        >
+          Exportar PDF
         </button>
       </div>
 

@@ -4,7 +4,8 @@ import {
   getTransactions,
   updateTransaction,
   deleteTransaction,
-  getAllTransactions
+  getAllTransactions,
+  exportTransactionsPDF
 } from "../controllers/transactionController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { getSummary } from "../controllers/transactionController.js";
@@ -15,6 +16,7 @@ const router = express.Router();
 
 // Todas as rotas abaixo exigem token (usuário logado)
 router.use(authMiddleware);
+router.get("/export/pdf", authorizeRole("ADMIN", "DEV"), exportTransactionsPDF);
 router.get("/summary", authorizeRole("ADMIN", "DEV"), getSummary);
 router.get("/", authorizeRole("ADMIN", "DEV"), getAllTransactions);
 router.post("/", authorizeRole("ADMIN", "DEV"), createTransaction);
