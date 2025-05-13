@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const TransactionForm = ({ onAdd }) => {
   const [titulo, setTitulo] = useState("");
   const [valor, setValor] = useState("");
-  const [tipo, setTipo] = useState("entrada");
+  const [tipo, setTipo] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
