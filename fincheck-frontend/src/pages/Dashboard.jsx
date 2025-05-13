@@ -20,6 +20,7 @@ const Dashboard = () => {
   const [categorias, setCategorias] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
 
+  
   const buscarTransacoes = async () => {
     try {
       const dados = await fetchTransactions();
@@ -82,7 +83,6 @@ const Dashboard = () => {
 
   const handleAdicionarTransacao = async (novaTransaction) => {
     try {
-      ("");
       const nova = await createTransaction(novaTransaction);
       const atualizadas = [...transacoes, nova];
       setTransacoes(atualizadas);
@@ -148,6 +148,7 @@ const handleExportCSV = async () => {
     console.error("Erro ao exportar CSV:", error);
   }
 };
+
 
 
   const handleAbrirModal = (transacao) => {

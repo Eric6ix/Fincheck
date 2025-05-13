@@ -1,6 +1,6 @@
 import { prisma } from "../lib/prisma.js";
 import PDFDocument from "pdfkit";
-import {Parser} from "json2csv"
+import { Parser } from "json2csv";
 
 // POST: http://localhost:3333/api/transactions
 export const createTransaction = async (req, res) => {
@@ -18,56 +18,55 @@ export const createTransaction = async (req, res) => {
   }
 };
 
-// GET: http://localhost:3333/api/transactions
-export const getTransactions = async (req, res) => {
-  const userId = req.user.userId;
-  const { month, year, type, categoryId, startDate, endDate } = req.query;
+// // GET: http://localhost:3333/api/transactions
+// export const getTransactions = async (req, res) => {
+//   const userId = req.user.userId;
+//   const { month, year, type, categoryId, startDate, endDate } = req.query;
 
-  try {
-    const filter = { userId };
+//   try {
+//     const filter = { userId };
 
-    if (type) {
-      filter.type = type;
-    }
+//     if (type) {
+//       filter.type = type;
+//     }
 
-    // Filtro por mês e ano (caso você continue usando)
-    if (month && year) {
-      const start = new Date(`${year}-${month}-01`);
-      const end = new Date(start);
-      end.setMonth(end.getMonth() + 1);
+//     // Filtro por mês e ano (caso você continue usando)
+//     if (month && year) {
+//       const start = new Date(`${year}-${month}-01`);
+//       const end = new Date(start);
+//       end.setMonth(end.getMonth() + 1);
 
-      filter.createdAt = {
-        gte: start,
-        lt: end,
-      };
-    }
+//       filter.createdAt = {
+//         gte: start,
+//         lt: end,
+//       };
+//     }
 
-    // Filtro por intervalo de datas (caso venha do frontend)
-    if (startDate && endDate) {
-      filter.createdAt = {
-        gte: new Date(startDate),
-        lte: new Date(endDate),
-      };
-    }
+//     // Filtro por intervalo de datas (caso venha do frontend)
+//     if (startDate && endDate) {
+//       filter.createdAt = {
+//         gte: new Date(startDate),
+//         lte: new Date(endDate),
+//       };
+//     }
 
-    // 🆕 Filtro por categoria
-    if (categoryId) {
-      filter.categoryId = categoryId;
-    }
+//     // 🆕 Filtro por categoria
+//     if (categoryId) {
+//       filter.categoryId = categoryId;
+//     }
 
-    const transactions = await prisma.transaction.findMany({
-      where: filter,
-      orderBy: { createdAt: "desc" },
-      include: { category: true }, // caso queira exibir a categoria
-    });
+//     const transactions = await prisma.transaction.findMany({
+//       where: filter,
+//       orderBy: { createdAt: "desc" },
+//       include: { category: true }, // caso queira exibir a categoria
+//     });
 
-    res.json(transactions);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Erro ao buscar transações com filtros" });
-  }
-};
-
+//     res.json(transactions);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Erro ao buscar transações com filtros" });
+//   }
+// };
 
 // PUT: http://localhost:3333/api/transactions/:id
 export const updateTransaction = async (req, res) => {
@@ -137,12 +136,13 @@ export const getAllTransactions = async (req, res) => {
             lte: new Date(endDate),
           },
         }),
-      ...(categoryId && { categoryId: parseInt(categoryId) }),
+      ...(categoryId && { categoryId }),
     };
 
     const transactions = await prisma.transaction.findMany({
       where,
       orderBy: { createdAt: "desc" },
+      include: { category: true },
     });
 
     res.json(transactions);
@@ -195,14 +195,13 @@ export const getSummary = async (req, res) => {
   }
 };
 
-
 export const exportTransactionsPDF = async (req, res) => {
   const userId = req.user.userId;
   const name = req.user.name;
 
   try {
     const transactions = await prisma.transaction.findMany({
-      where: { userId, name }, 
+      where: { userId, name },
       include: { category: true },
       orderBy: { createdAt: "desc" },
     });
@@ -234,7 +233,6 @@ export const exportTransactionsPDF = async (req, res) => {
   }
 };
 
-
 export const exportTransactionsCSV = async (req, res) => {
   const userId = req.user.userId;
 
@@ -242,26 +240,26 @@ export const exportTransactionsCSV = async (req, res) => {
     const transactions = await prisma.transaction.findMany({
       where: { userId },
       include: { category: true },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
     // Mapeia os dados no formato que será exportado
     const csvData = transactions.map((tx) => ({
       Título: tx.title,
       Valor: tx.amount.toFixed(2),
-      Tipo: tx.type === 'income' ? 'Entrada' : 'Saída',
-      Categoria: tx.category?.name || 'Sem categoria',
-      Data: new Date(tx.createdAt).toLocaleDateString('pt-BR'),
+      Tipo: tx.type === "income" ? "Entrada" : "Saída",
+      Categoria: tx.category?.name || "Sem categoria",
+      Data: new Date(tx.createdAt).toLocaleDateString("pt-BR"),
     }));
 
     const parser = new Parser();
     const csv = parser.parse(csvData);
 
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename=transacoes.csv');
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=transacoes.csv");
     res.send(csv);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Erro ao gerar CSV' });
+    res.status(500).json({ error: "Erro ao gerar CSV" });
   }
 };

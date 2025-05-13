@@ -1,17 +1,15 @@
 import express from "express";
 import {
   createTransaction,
-  getTransactions,
   updateTransaction,
   deleteTransaction,
   getAllTransactions,
   exportTransactionsCSV,
-  exportTransactionsPDF
+  exportTransactionsPDF,
 } from "../controllers/transactionController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { getSummary } from "../controllers/transactionController.js";
 import { authorizeRole } from "../middlewares/authorizeRole.js";
-
 
 const router = express.Router();
 
@@ -22,8 +20,7 @@ router.get("/export/csv", exportTransactionsCSV);
 router.get("/summary", authorizeRole("ADMIN", "DEV"), getSummary);
 router.get("/", authorizeRole("ADMIN", "DEV"), getAllTransactions);
 router.post("/", authorizeRole("ADMIN", "DEV"), createTransaction);
-router.get("/", authorizeRole("ADMIN", "DEV"),getTransactions);
-router.put("/:id", authorizeRole("ADMIN", "DEV"),updateTransaction);
-router.delete("/:id", authorizeRole("ADMIN", "DEV"),deleteTransaction);
+router.put("/:id", authorizeRole("ADMIN", "DEV"), updateTransaction);
+router.delete("/:id", authorizeRole("ADMIN", "DEV"), deleteTransaction);
 
 export default router;
