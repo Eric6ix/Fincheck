@@ -11,6 +11,6 @@ export const authMiddleware = (req, res, next) => {
     req.user = decoded
     next()
   } catch (error) {
-    res.status(401).json({ error: 'Token inválido!' })
+    res.status(401).json({ error: 'Token inválido ou expirado! faça login novamnete.' })
   }
 }

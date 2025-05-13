@@ -15,13 +15,10 @@ export const getUser = async (req, res) => {
   }
 };
 
-
 // PUT: http://localhost:3333/api/user/:id
 export const updateUser = async (req, res) => {
   const { id } = req.params;
   const { name, password, role } = req.body;
-  const requesterId = req.user.userId;
-  const requesterRole = req.user.role;
 
   try {
     const existing = await prisma.user.findUnique({ where: { id } });
