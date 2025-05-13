@@ -18,55 +18,55 @@ export const createTransaction = async (req, res) => {
   }
 };
 
-// // GET: http://localhost:3333/api/transactions
-// export const getTransactions = async (req, res) => {
-//   const userId = req.user.userId;
-//   const { month, year, type, categoryId, startDate, endDate } = req.query;
+// GET: http://localhost:3333/api/transactions
+export const getTransactions = async (req, res) => {
+  const userId = req.user.userId;
+  const { month, year, type, categoryId, startDate, endDate } = req.query;
 
-//   try {
-//     const filter = { userId };
+  try {
+    const filter = { userId };
 
-//     if (type) {
-//       filter.type = type;
-//     }
+    if (type) {
+      filter.type = type;
+    }
 
-//     // Filtro por mês e ano (caso você continue usando)
-//     if (month && year) {
-//       const start = new Date(`${year}-${month}-01`);
-//       const end = new Date(start);
-//       end.setMonth(end.getMonth() + 1);
+    // Filtro por mês e ano (caso você continue usando)
+    if (month && year) {
+      const start = new Date(`${year}-${month}-01`);
+      const end = new Date(start);
+      end.setMonth(end.getMonth() + 1);
 
-//       filter.createdAt = {
-//         gte: start,
-//         lt: end,
-//       };
-//     }
+      filter.createdAt = {
+        gte: start,
+        lt: end,
+      };
+    }
 
-//     // Filtro por intervalo de datas (caso venha do frontend)
-//     if (startDate && endDate) {
-//       filter.createdAt = {
-//         gte: new Date(startDate),
-//         lte: new Date(endDate),
-//       };
-//     }
+    // Filtro por intervalo de datas (caso venha do frontend)
+    if (startDate && endDate) {
+      filter.createdAt = {
+        gte: new Date(startDate),
+        lte: new Date(endDate),
+      };
+    }
 
-//     // 🆕 Filtro por categoria
-//     if (categoryId) {
-//       filter.categoryId = categoryId;
-//     }
+    // 🆕 Filtro por categoria
+    if (categoryId) {
+      filter.categoryId = categoryId;
+    }
 
-//     const transactions = await prisma.transaction.findMany({
-//       where: filter,
-//       orderBy: { createdAt: "desc" },
-//       include: { category: true }, // caso queira exibir a categoria
-//     });
+    const transactions = await prisma.transaction.findMany({
+      where: filter,
+      orderBy: { createdAt: "desc" },
+      include: { category: true }, // caso queira exibir a categoria
+    });
 
-//     res.json(transactions);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Erro ao buscar transações com filtros" });
-//   }
-// };
+    res.json(transactions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao buscar transações com filtros" });
+  }
+};
 
 // PUT: http://localhost:3333/api/transactions/:id
 export const updateTransaction = async (req, res) => {
