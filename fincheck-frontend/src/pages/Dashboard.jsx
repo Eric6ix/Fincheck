@@ -61,7 +61,6 @@ const Dashboard = () => {
     try {
       const res = await api.get("/category");
       setCategorias(res.data);
-      console.log(categorias);
     } catch (err) {
       console.error("Erro ao buscar categorias:", err.message);
     }
