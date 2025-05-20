@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 export const generateRefreshToken = async (userId) => {
   const refreshToken = jwt.sign({ userId }, process.env.REFRESH_SECRET, {
-    expiresIn: "7d", // mais longo
+    expiresIn: "7d",
   });
 
   // Salva no banco (você pode criar uma tabela RefreshToken com userId e token)

@@ -12,15 +12,15 @@ beforeAll(async () => {
       password: "123123",      // troca pelos dados reais
     });
 
-  token = response.body.token;  // pega o token certinho
+  token = response.body.token;  // pega o token certo
 
 });
 
 describe("Testes de Categorias", () => {
   it("deve listar categorias existentes", async () => {
     const response = await request(app)
-      .get("/api/category")       // sua rota
-      .set("Authorization", `Bearer ${token}`); // manda o token aqui!
+      .get("/api/category")       //  rota
+      .set("Authorization", `Bearer ${token}`); // token aqui!
 
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);

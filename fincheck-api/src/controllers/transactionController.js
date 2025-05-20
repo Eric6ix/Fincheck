@@ -151,6 +151,40 @@ export const getAllTransactions = async (req, res) => {
   }
 };
 
+
+export const getResumo = async (req, res) => {
+  const userId = req.userId; // vindo do middleware de auth
+
+  const entradas = await prisma.transaction.aggregate({
+    where: {
+      userId,
+      tipo: 'entry',
+    },
+    _sum: {
+      valor: true,
+    },
+  });
+
+  const saidas = await prisma.transaction.aggregate({
+    where: {
+      userId,
+      tipo: 'outlet',
+    },
+    _sum: {
+      valor: true,
+    },
+  });
+
+  const totalEntradas = entradas._sum.valor || 0;
+  const totalSaidas = saidas._sum.valor || 0;
+
+  res.json({
+    entradas: totalEntradas,
+    saidas: totalSaidas,
+    saldo: totalEntradas - totalSaidas,
+  });
+};
+
 export const getSummary = async (req, res) => {
   const userId = req.user.userId;
   const { month, year } = req.query;

@@ -20,7 +20,7 @@ const Login = () => {
       const { token } = response.data;
       const { name } = response.data.user;
       localStorage.setItem("token", token);
-      alert(`Bem-Vindo de volta ${name}`)
+      alert(`Bem-Vindo ${name}`)
       navigate("/dashboard");
     } catch (err) {
       setError("Credenciais inválidas.");

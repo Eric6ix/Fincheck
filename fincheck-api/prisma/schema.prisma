@@ -8,14 +8,14 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  name          String
-  email         String         @unique
-  password      String
-  wallet    Float     @default(0.0)
-  role          UserRole       @default(user)
-  transactions  Transaction[]
-  Category      Category[]
+  id           String        @id @default(cuid())
+  name         String
+  email        String        @unique
+  password     String
+  wallet       Float         @default(0.0)
+  role         UserRole      @default(user)
+  transactions Transaction[]
+  Category     Category[]
 }
 
 model Transaction {
@@ -38,10 +38,9 @@ model Category {
   user         User          @relation(fields: [userId], references: [id])
 }
 
-
 enum TransactionType {
-  income
-  expense
+  entry
+  outlet
 }
 
 enum UserRole {
@@ -51,4 +50,6 @@ enum UserRole {
 }
 
 //npx prisma migrate reset
-// npx prisma migrate dev --name add-role-to-user
+// npx prisma migrate dev --name add-role-to-user "modelo de exemplo"
+//docker run --name fincheck-db -e POSTGRES_PASSWORD=root -e POSTGRES_DB=fincheck-schema -p 5432:5432 -d postgres
+//npx prisma migrate dev --name init

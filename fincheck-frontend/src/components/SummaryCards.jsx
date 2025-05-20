@@ -1,4 +1,3 @@
-import React from "react";
 import { FaArrowDown, FaArrowUp, FaDollarSign } from "react-icons/fa";
 
 const SummaryCards = ({ resumo }) => {

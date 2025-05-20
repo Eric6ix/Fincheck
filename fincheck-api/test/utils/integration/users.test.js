@@ -18,7 +18,7 @@ beforeAll(async () => {
 describe("Testes de Usuário", () => {
   it("deve retornar lista de usuários", async () => {
     const response = await request(app)
-      .get("/api/user/") // ajuste conforme sua rota
+      .get("/api/user/") //  rota
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);

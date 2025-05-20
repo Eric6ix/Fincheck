@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import request from "supertest";
-import app from "../../../src/app.js"; // caminho relativo até seu app
+import app from "../../../src/app.js";
 
 describe("Testes de autenticação", () => {
   it("deve fazer login com sucesso", async () => {
