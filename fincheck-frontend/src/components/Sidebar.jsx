@@ -10,8 +10,7 @@ const Sidebar = ({ onLogout }) => {
         <div className="flex items-center space-x-2">
           <FiPieChart />
           <span>Dashboard</span>
-        </div>
-        {/* você pode adicionar mais itens futuramente */}
+        </div>        
       </nav>
 
       <button

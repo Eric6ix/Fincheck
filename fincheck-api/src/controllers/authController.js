@@ -7,24 +7,21 @@ dotenv.config();
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, wallet} = req.body;
 
-    // Verificar se o e-mail já está cadastrado
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser)
       return res.status(400).json({ error: "E-mail já cadastrado!" });
 
-    // Hash da senha
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Criar usuário
     const user = await prisma.user.create({
-      data: { name, email, password: hashedPassword, role: "user" },
+      data: { name, email, password: hashedPassword, wallet, role: "user" },
     });
 
     res
       .status(201)
-      .json({ message: `${user.role} ${user.name} registrado com sucesso!` });
+      .json( "sucesso!" );
   } catch (error) {
     res.status(500).json({ error: "Erro ao registrar usuário" });
     console.log(error);
@@ -57,6 +54,7 @@ export const login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        wallet: user.wallet,
       },
     });
   } catch (error) {

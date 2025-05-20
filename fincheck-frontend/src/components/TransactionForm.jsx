@@ -14,7 +14,7 @@ const TransactionForm = ({ onAdd }) => {
       type: tipo,
     };
 
-    onAdd(novaTransacao); // Callback para a dashboard
+    onAdd(novaTransacao);
     setTitulo("");
     setValor("");
     setTipo("entrada");
