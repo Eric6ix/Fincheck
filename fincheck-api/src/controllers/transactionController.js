@@ -4,18 +4,18 @@ import { Parser } from "json2csv";
 
 // POST: http://localhost:3333/api/transactions
 export const createTransaction = async (req, res) => {
-  const { title, amount, type, categoryId  } = req.body;
+  const { title, amount, type } = req.body;
   const userId = req.user.userId;
 
   try {
     const transaction = await prisma.transaction.create({
-      data: { title, amount: parseFloat(amount), type, userId, categoryId, },
+      data: { title, amount: parseFloat(amount), type, userId },
     });
 
     res.status(201).json(transaction);
   } catch (error) {
     res.status(500).json({ error: "Erro ao criar transação" });
-    console.log(err)
+    console.log(err);
   }
 };
 
@@ -123,7 +123,7 @@ export const deleteTransaction = async (req, res) => {
 };
 
 // GET: /api/transactions?startDate=2024-01-01&endDate=2024-01-31&categoryId=abc123
-export const getAllTransactions = async (req, res) => {
+export const getFilterTransactions = async (req, res) => {
   const userId = req.user.userId;
   const { startDate, endDate, categoryId } = req.query;
 

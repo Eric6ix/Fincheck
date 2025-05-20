@@ -3,7 +3,7 @@ import {
   createTransaction,
   updateTransaction,
   deleteTransaction,
-  getAllTransactions,
+  getFilterTransactions,
   exportTransactionsCSV,
   exportTransactionsPDF,
 } from "../controllers/transactionController.js";
@@ -18,7 +18,7 @@ router.use(authMiddleware);
 router.get("/export/pdf", exportTransactionsPDF);
 router.get("/export/csv", exportTransactionsCSV);
 router.get("/summary", authorizeRole("ADMIN", "DEV"), getSummary);
-router.get("/", authorizeRole("ADMIN", "DEV"), getAllTransactions);
+router.get("/", authorizeRole("ADMIN", "DEV"), getFilterTransactions);
 router.post("/", authorizeRole("ADMIN", "DEV"), createTransaction);
 router.put("/:id", authorizeRole("ADMIN", "DEV"), updateTransaction);
 router.delete("/:id", authorizeRole("ADMIN", "DEV"), deleteTransaction);

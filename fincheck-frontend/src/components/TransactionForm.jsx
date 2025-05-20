@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const TransactionForm = ({ onAdd }) => {
   const [titulo, setTitulo] = useState("");
   const [valor, setValor] = useState("");
-  const [tipo, setTipo] = useState("");
+  const [tipo, setTipo] = useState("entry");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,7 +17,7 @@ const TransactionForm = ({ onAdd }) => {
     onAdd(novaTransacao);
     setTitulo("");
     setValor("");
-    setTipo("entrada");
+    setTipo("");
   };
   return (
     <form
@@ -47,8 +47,8 @@ const TransactionForm = ({ onAdd }) => {
           onChange={(e) => setTipo(e.target.value)}
           className="border rounded-lg p-2"
         >
-          <option value="income">Entrada</option>
-          <option value="expense">Saída</option>
+          <option value="entry">Entrada</option>
+          <option value="outlet">Saída</option>
         </select>
       </div>
       <button
