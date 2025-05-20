@@ -19,7 +19,7 @@ const Login = () => {
       const response = await axios.post("/auth/login", { email, password });
       const { token } = response.data;
       localStorage.setItem("token", token);
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       setError("Credenciais inválidas.");
     }
