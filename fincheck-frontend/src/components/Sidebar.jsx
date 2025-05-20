@@ -1,4 +1,3 @@
-import React from 'react'
 import { FiLogOut, FiPieChart } from 'react-icons/fi'
 
 const Sidebar = ({ onLogout }) => {

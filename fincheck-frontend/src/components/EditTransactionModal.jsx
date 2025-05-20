@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 const EditTransactionModal = ({ isOpen, onClose, transaction, onUpdate }) => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
-  const [type, setType] = useState("income");
+  const [type, setType] = useState("");
 
   useEffect(() => {
     if (transaction) {
@@ -52,8 +52,8 @@ const EditTransactionModal = ({ isOpen, onClose, transaction, onUpdate }) => {
             onChange={(e) => setType(e.target.value)}
             className="w-full border p-2 rounded"
           >
-            <option value="income">Entrada</option>
-            <option value="expense">Saída</option>
+            <option value="entry">Entrada</option>
+            <option value="outlet">Saída</option>
           </select>
           <div className="flex justify-end gap-2">
             <button

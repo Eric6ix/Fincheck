@@ -66,19 +66,19 @@ const Dashboard = () => {
     }
   };
 
-  const calcularResumo = (transacoes) => {
-    const entradas = transacoes
-      .filter((t) => t.type === "entrada")
-      .reduce((acc, t) => acc + t.amount, 0);
+  // const calcularResumo = (transacoes) => {
+  //   const entradas = transacoes
+  //     .filter((t) => t.type === "entrada")
+  //     .reduce((acc, t) => acc + t.amount, 0);
 
-    const saidas = transacoes
-      .filter((t) => t.type === "saída")
-      .reduce((acc, t) => acc + t.amount, 0);
+  //   const saidas = transacoes
+  //     .filter((t) => t.type === "saída")
+  //     .reduce((acc, t) => acc + t.amount, 0);
 
-    const saldo = entradas - saidas;
+  //   const saldo = entradas - saidas;
 
-    setResumo({ entradas, saidas, saldo });
-  };
+  //   setResumo({ entradas, saidas, saldo });
+  // };
 
   const handleAdicionarTransacao = async (novaTransaction) => {
     try {

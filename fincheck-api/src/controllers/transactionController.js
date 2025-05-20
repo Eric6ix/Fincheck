@@ -4,17 +4,18 @@ import { Parser } from "json2csv";
 
 // POST: http://localhost:3333/api/transactions
 export const createTransaction = async (req, res) => {
-  const { title, amount, type, categoryId } = req.body;
+  const { title, amount, type, categoryId  } = req.body;
   const userId = req.user.userId;
 
   try {
     const transaction = await prisma.transaction.create({
-      data: { title, amount: parseFloat(amount), type, userId, categoryId },
+      data: { title, amount: parseFloat(amount), type, userId, categoryId, },
     });
 
     res.status(201).json(transaction);
   } catch (error) {
     res.status(500).json({ error: "Erro ao criar transação" });
+    console.log(err)
   }
 };
 
@@ -86,7 +87,7 @@ export const updateTransaction = async (req, res) => {
     if (!existing || existing.userId !== userId) {
       return res.status(404).json({ error: "Transação não encontrada" });
     }
-    if (!["income", "expense"].includes(type)) {
+    if (!["entry", "outlet"].includes(type)) {
       return res.status(400).json({ error: "Tipo de transação inválido." });
     }
 
@@ -151,40 +152,6 @@ export const getAllTransactions = async (req, res) => {
   }
 };
 
-
-export const getResumo = async (req, res) => {
-  const userId = req.userId; // vindo do middleware de auth
-
-  const entradas = await prisma.transaction.aggregate({
-    where: {
-      userId,
-      tipo: 'entry',
-    },
-    _sum: {
-      valor: true,
-    },
-  });
-
-  const saidas = await prisma.transaction.aggregate({
-    where: {
-      userId,
-      tipo: 'outlet',
-    },
-    _sum: {
-      valor: true,
-    },
-  });
-
-  const totalEntradas = entradas._sum.valor || 0;
-  const totalSaidas = saidas._sum.valor || 0;
-
-  res.json({
-    entradas: totalEntradas,
-    saidas: totalSaidas,
-    saldo: totalEntradas - totalSaidas,
-  });
-};
-
 export const getSummary = async (req, res) => {
   const userId = req.user.userId;
   const { month, year } = req.query;
@@ -204,24 +171,24 @@ export const getSummary = async (req, res) => {
       };
     }
 
-    const [income, expense] = await Promise.all([
+    const [entry, outlet] = await Promise.all([
       prisma.transaction.aggregate({
         _sum: { amount: true },
-        where: { ...dateFilter, type: "income" },
+        where: { ...dateFilter, type: "entry" }, // <-- corrigido
       }),
       prisma.transaction.aggregate({
         _sum: { amount: true },
-        where: { ...dateFilter, type: "expense" },
+        where: { ...dateFilter, type: "outlet" }, // <-- corrigido
       }),
     ]);
 
-    const totalIncome = income._sum.amount || 0;
-    const totalExpense = expense._sum.amount || 0;
-    const balance = totalIncome - totalExpense;
+    const totalEntry = entry._sum.amount || 0;
+    const totalOutlet = outlet._sum.amount || 0;
+    const balance = totalEntry - totalOutlet;
 
     res.json({
-      totalIncome,
-      totalExpense,
+      totalEntry,
+      totalOutlet,
       balance,
     });
   } catch (error) {
@@ -254,7 +221,7 @@ export const exportTransactionsPDF = async (req, res) => {
         .text(`Título: ${tx.title}`)
         .text(`Nome: ${tx.name}`)
         .text(`Valor: R$ ${tx.amount.toFixed(2)}`)
-        .text(`Tipo: ${tx.type === "income" ? "Entrada" : "Saída"}`)
+        .text(`Tipo: ${tx.type === "entry" ? "Entrada" : "Saída"}`)
         .text(`Categoria: ${tx.category?.name || "Sem categoria"}`)
         .text(`Data: ${new Date(tx.createdAt).toLocaleDateString()}`)
         .moveDown();
@@ -281,7 +248,7 @@ export const exportTransactionsCSV = async (req, res) => {
     const csvData = transactions.map((tx) => ({
       Título: tx.title,
       Valor: tx.amount.toFixed(2),
-      Tipo: tx.type === "income" ? "Entrada" : "Saída",
+      Tipo: tx.type === "entry" ? "Entrada" : "Saída",
       Categoria: tx.category?.name || "Sem categoria",
       Data: new Date(tx.createdAt).toLocaleDateString("pt-BR"),
     }));

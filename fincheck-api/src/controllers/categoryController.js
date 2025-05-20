@@ -78,7 +78,7 @@ export const deleteCategory = async (req, res) => {
     await prisma.category.delete({ where: { id } });
 
     console.log(`Categoria "${existing.name}" deletada com sucesso`);
-    res.status(204).end(); // 204 = No Content
+    res.status(204).end(); 
   } catch (error) {
     res.status(500).json({ error: "Erro ao deletar categoria" });
   }

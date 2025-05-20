@@ -22,7 +22,7 @@ model Transaction {
   id         String          @id @default(cuid())
   title      String
   amount     Float
-  type       TransactionType
+  type       TransactionType  @default(entry)
   createdAt  DateTime        @default(now())
   userId     String
   user       User            @relation(fields: [userId], references: [id])

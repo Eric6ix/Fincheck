@@ -10,7 +10,13 @@ export const createCategory = async (dados) => {
   return response.data;
 };
 
-export const getCategory = async (dados) => {
-  const response = await api.get("/category", dados);
+export const updateCategory = async (dados) => {
+  const response = await api.put("/category", dados);
   return response.data;
 };
+
+export const deletCategory = async (dados) => {
+  const response = await api.delete("/category", dados);
+  return response.data;
+};
+
