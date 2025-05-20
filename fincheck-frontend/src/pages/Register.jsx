@@ -22,9 +22,8 @@ const Register = () => {
         email,
         password,
       });
-      const { token } = response.data;
-      localStorage.setItem("token", token);
-      navigate("/login");
+      navigate("/");
+      alert(`${name} registrado com êxeto`)
     } catch (err) {
       setError("Credenciais inválidas.");
     }
@@ -81,7 +80,7 @@ const Register = () => {
 
           <p className="text-sm text-center mt-4">
             Já tem uma conta?{" "}
-            <a href="/login" className="text-blue-600 hover:underline">
+            <a href="/" className="text-blue-600 hover:underline">
               Faça login
             </a>
           </p>
