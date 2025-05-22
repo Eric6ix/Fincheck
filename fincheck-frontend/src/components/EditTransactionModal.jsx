@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const EditTransactionModal = ({ isOpen, onClose, transaction, onUpdate }) => {
   const [title, setTitle] = useState("");

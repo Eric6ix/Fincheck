@@ -1,61 +1,61 @@
 import React, { useState } from "react";
 
 const TransactionForm = ({ onAdd }) => {
-  const [titulo, setTitulo] = useState("");
-  const [valor, setValor] = useState("");
-  const [tipo, setTipo] = useState("entry");
+  const [title, setTitle] = useState("");
+  const [value, setValue] = useState("");
+  const [type, setType] = useState("entry");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const novaTransacao = {
-      title: titulo,
-      amount: parseFloat(valor),
-      type: tipo,
+    const newTransaction = {
+      title: title,
+      amount: parseFloat(value),
+      type: type,
     };
 
-    onAdd(novaTransacao);
-    setTitulo("");
-    setValor("");
-    setTipo("");
+    onAdd(newTransaction);
+    setTitle("");
+    setValue("");
+    setType("");
   };
   return (
     <form
       onSubmit={handleSubmit}
       className="bg-white rounded-2xl shadow p-6 mb-6"
     >
-      <h2 className="text-xl font-semibold mb-4">Nova Transação</h2>
+      <h2 className="text-xl font-semibold mb-4">New transaction</h2>
       <div className="grid md:grid-cols-3 gap-4 mb-4">
         <input
           type="text"
-          placeholder="Título"
-          value={titulo}
-          onChange={(e) => setTitulo(e.target.value)}
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           className="border rounded-lg p-2"
           required
         />
         <input
           type="number"
-          placeholder="Valor"
-          value={valor}
+          placeholder="Value"
+          value={value}
           onChange={(e) => setValor(e.target.value)}
           className="border rounded-lg p-2"
           required
         />
         <select
-          value={tipo}
+          value={type}
           onChange={(e) => setTipo(e.target.value)}
           className="border rounded-lg p-2"
         >
-          <option value="entry">Entrada</option>
-          <option value="outlet">Saída</option>
+          <option value="entry">Entry</option>
+          <option value="outlet">Outlet</option>
         </select>
       </div>
       <button
         type="submit"
         className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
       >
-        Adicionar
+        Add
       </button>
     </form>
   );

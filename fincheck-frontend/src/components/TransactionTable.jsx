@@ -6,11 +6,11 @@ const TransactionTable = ({ transacoes, onEdit, onDelete }) => {
       <table className="min-w-full">
         <thead>
           <tr className="text-left text-gray-600 border-b">
-            <th className="pb-3">Título</th>
-            <th className="pb-3">Tipo</th>
-            <th className="pb-3">Valor</th>
+            <th className="pb-3">Title</th>
+            <th className="pb-3">Type</th>
+            <th className="pb-3">Value</th>
             <th className="pb-3">Data</th>
-            <th className="pb-3">Ações</th>
+            <th className="pb-3">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -23,7 +23,7 @@ const TransactionTable = ({ transacoes, onEdit, onDelete }) => {
               <td
                 className={clsx(
                   "py-2 font-medium",
-                  t.type === "entrada" ? "text-green-600" : "text-red-500"
+                  t.type === "entry" ? "text-green-900" : "text-red-700"
                 )}
               >
                 {t.type}
@@ -37,13 +37,13 @@ const TransactionTable = ({ transacoes, onEdit, onDelete }) => {
                   onClick={() => onEdit(t)}
                   className="text-blue-600 hover:underline text-sm"
                 >
-                  Editar
+                  Edit
                 </button>
                 <button
                   onClick={() => onDelete(t.id)}
                   className="text-red-600 hover:underline text-sm"
                 >
-                  Excluir
+                  Delete
                 </button>
               </td>
             </tr>

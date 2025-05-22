@@ -1,13 +1,13 @@
 // services/transactions.js
 import api from "./api";
 
-export const fetchTransactions = async () => {
+export const getTransactions = async () => {
   const response = await api.get("/transactions/");
   return response.data;
 };
 
-export const createTransaction = async (novaTransaction) => {
-  const response = await api.post("/transactions/", novaTransaction);
+export const createTransaction = async (newTransaction) => {
+  const response = await api.post("/transactions/", newTransaction);
   return response.data;
 };
 

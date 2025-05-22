@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  fetchTransactions,
+  getTransactions,
   createTransaction,
   deleteTransaction,
 } from "../services/transactions";
@@ -11,148 +11,145 @@ import EditTransactionModal from "../components/EditTransactionModal";
 import api from "../services/api";
 
 const Dashboard = () => {
-  const [transacoes, setTransacoes] = useState([]);
-  const [resumo, setResumo] = useState({ entradas: 0, saidas: 0, saldo: 0 });
-  const [modalAberto, setModalAberto] = useState(false);
-  const [transacaoSelecionada, setTransacaoSelecionada] = useState(null);
+  const [transaction, setTransaction] = useState([]);
+  const [summary, setSummary] = useState({ entry: 0, outlet: 0, wallet: 0 });
+  const [modalOpen, setModalOpen] = useState(false);
+  const [transactionSelected, setTransactionSelected] = useState(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [categorias, setCategorias] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [category, setCategory] = useState([]);
+  const [CategorySelected, setCategorySelected] = useState("");
 
-  
-  const buscarTransacoes = async () => {
+  const fetchTransactions = async () => {
     try {
-      const dados = await fetchTransactions();
-      setTransacoes(dados);
-      calcularResumo(dados);
-    } catch (err) {
-      console.error("Erro ao carregar transações:", err.message);
-    }
+      const data = await getTransactions();
+      setTransaction(data);
+      CalculateSummary(data);
+    } catch (err) {}
   };
 
-  const buscarTransacoesComFiltro = async () => {
+  const fetchTransactionsWithFilter = async () => {
     try {
       const params = new URLSearchParams();
       if (startDate) params.append("startDate", startDate);
       if (endDate) params.append("endDate", endDate);
-      if (selectedCategory) params.append("categoryId", selectedCategory);
+      if (setCategorySelected) params.append("categoryId", CategorySelected);
 
       const res = await api.get(`/transactions?${params.toString()}`);
-      setTransacoes(res.data);
-      calcularResumo(res.data);
+      setTransaction(res.data);
+      CalculateSummary(res.data);
     } catch (err) {
-      console.error("Erro ao filtrar transações:", err.message);
+      console.error("Erro when filtering:", err.message);
     }
   };
 
-  const limparFiltro = () => {
+  const clenaFilter = () => {
     setStartDate("");
     setEndDate("");
-    buscarTransacoes();
+    fetchTransactions();
   };
 
   useEffect(() => {
-    buscarTransacoes();
-    buscarCategorias();
+    fetchTransactions();
+    fetchCategory();
   }, []);
 
-  const buscarCategorias = async () => {
+  const fetchCategory = async () => {
     try {
       const res = await api.get("/category");
-      setCategorias(res.data);
+      setCategory(res.data);
+      CalculateSummary();
     } catch (err) {
       console.error("Erro ao buscar categorias:", err.message);
     }
   };
 
-  const calcularResumo = (transacoes) => {
-    const entradas = transacoes
-      .filter((t) => t.type === "entrada")
+  const CalculateSummary = (transaction) => {
+    const entry = transaction
+      .filter((t) => t.type === "entry")
       .reduce((acc, t) => acc + t.amount, 0);
 
-    const saidas = transacoes
-      .filter((t) => t.type === "saída")
+    const outlet = transaction
+      .filter((t) => t.type === "outlet")
       .reduce((acc, t) => acc + t.amount, 0);
 
-    const saldo = entradas - saidas;
+    const wallet = entry - outlet;
 
-    setResumo({ entradas, saidas, saldo });
+    setSummary({ outlet, entry, wallet });
   };
 
-  const handleAdicionarTransacao = async (novaTransaction) => {
+  const handleAddTransaction = async (creatTransaction) => {
     try {
-      const nova = await createTransaction(novaTransaction);
-      const atualizadas = [...transacoes, nova];
-      setTransacoes(atualizadas);
-      calcularResumo(atualizadas);
+      const creat = await createTransaction(creatTransaction);
+      const successCreat = [...transacoes, creat];
+      setTransaction(successCreat);
+      CalculateSummary(successCreat);
     } catch (err) {
-      console.error("Erro ao adicionar transação:", err.message);
+      console.error("Erro when add transaction:", err.message);
     }
   };
 
-  const handleAtualizarTransacao = async (dadosAtualizados) => {
+  const handleUpdateTransaction = async (updateData) => {
     try {
-      await api.put(`/transactions/${dadosAtualizados.id}`, dadosAtualizados);
-      buscarTransacoes();
+      await api.put(`/transactions/${updateData.id}`, updateData);
+      fetchTransactions();
     } catch (err) {
-      console.error("Erro ao atualizar transação:", err);
+      console.error("Erro when update transaction:", err);
     }
   };
 
   const handleDeleteTransaction = async (id) => {
     try {
       await deleteTransaction(id);
-      setTransacoes((prev) => prev.filter((tx) => tx.id !== id));
+      setTransaction((prev) => prev.filter((tx) => tx.id !== id));
+      CalculateSummary();
     } catch (error) {
-      console.error("Erro ao deletar transação:", error);
+      console.error("Erro when delet transaction:", error);
     }
   };
 
   const handleExportPDF = async () => {
-  try {
-    const response = await api.get("/transactions/export/pdf", {
-      responseType: "blob", // importante para baixar arquivo binário
-    });
+    try {
+      const response = await api.get("/transactions/export/pdf", {
+        responseType: "blob",
+      });
 
-    const blob = new Blob([response.data], { type: "application/pdf" });
-    const url = window.URL.createObjectURL(blob);
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "transacoes.pdf");
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  } catch (error) {
-    console.error("Erro ao exportar PDF:", error);
-  }
-};
-const handleExportCSV = async () => {
-  try {
-    const response = await api.get("/transactions/export/csv", {
-      responseType: "blob",
-    });
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "transacoes.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Erro when export PDF:", error);
+    }
+  };
+  const handleExportCSV = async () => {
+    try {
+      const response = await api.get("/transactions/export/csv", {
+        responseType: "blob",
+      });
 
-    const blob = new Blob([response.data], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
+      const blob = new Blob([response.data], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "transacoes.csv");
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  } catch (error) {
-    console.error("Erro ao exportar CSV:", error);
-  }
-};
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "transacoes.csv");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Erro when export CSV:", error);
+    }
+  };
 
-
-
-  const handleAbrirModal = (transacao) => {
-    setTransacaoSelecionada(transacao);
-    setModalAberto(true);
+  const handleOpenModal = (transaction) => {
+    setTransactionSelected(transaction);
+    setModalOpen(true);
   };
 
   const handleLogout = () => {
@@ -168,31 +165,31 @@ const handleExportCSV = async () => {
           onClick={handleLogout}
           className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
         >
-          Sair
+          Exit
         </button>
 
         <button
           onClick={handleExportPDF}
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
         >
-          Exportar PDF
+          Export PDF
         </button>
 
         <button
           onClick={handleExportCSV}
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
         >
-          Exportar CSV
+          Export CSV
         </button>
       </div>
 
       {/* Cartões de resumo */}
-      <SummaryCards resumo={resumo} />
+      <SummaryCards summary={summary} />
 
       {/* Filtros por período */}
       <div className="flex gap-4 items-end mb-4">
         <div>
-          <label className="block text-sm text-gray-600">De:</label>
+          <label className="block text-sm text-gray-600">from :</label>
           <input
             type="date"
             value={startDate}
@@ -201,7 +198,7 @@ const handleExportCSV = async () => {
           />
         </div>
         <div>
-          <label className="block text-sm text-gray-600">Até:</label>
+          <label className="block text-sm text-gray-600">to:</label>
           <input
             type="date"
             value={endDate}
@@ -210,26 +207,26 @@ const handleExportCSV = async () => {
           />
         </div>
         <button
-          onClick={buscarTransacoesComFiltro}
+          onClick={fetchTransactionsWithFilter}
           className="bg-blue-600 text-white px-4 py-2 rounded"
         >
-          Filtrar
+          Filter
         </button>
         <button
-          onClick={limparFiltro}
+          onClick={clenaFilter}
           className="bg-gray-400 text-white px-4 py-2 rounded"
         >
-          Limpar
+          Clean
         </button>
         <div>
-          <label className="block text-sm text-gray-600">Categoria:</label>
+          <label className="block text-sm text-gray-600">Category:</label>
           <select
-            value={selectedCategory}
+            value={CategorySelected}
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="border rounded px-2 py-1"
           >
-            <option value="">Todas</option>
-            {categorias.map((cat) => (
+            <option value="">All</option>
+            {category.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>
@@ -239,21 +236,21 @@ const handleExportCSV = async () => {
       </div>
 
       {/* Formulário de nova transação */}
-      <TransactionForm onAdd={handleAdicionarTransacao} />
+      <TransactionForm onAdd={handleAddTransaction} />
 
       {/* Tabela de transações */}
       <TransactionTable
-        transacoes={transacoes}
+        transacoes={transaction}
         onDelete={handleDeleteTransaction}
-        onEdit={handleAbrirModal}
+        onEdit={handleOpenModal}
       />
 
       {/* Modal de edição */}
       <EditTransactionModal
-        isOpen={modalAberto}
-        onClose={() => setModalAberto(false)}
-        transaction={transacaoSelecionada}
-        onUpdate={handleAtualizarTransacao}
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        transaction={transactionSelected}
+        onUpdate={handleUpdateTransaction}
       />
     </main>
   );
