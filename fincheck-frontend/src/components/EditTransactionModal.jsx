@@ -21,7 +21,7 @@ const EditTransactionModal = ({ isOpen, onClose, transaction, onUpdate }) => {
       amount: parseFloat(amount),
       type,
     });
-    onClose(); // Fecha o modal
+    onClose(); 
   };
 
   if (!isOpen) return null;
@@ -29,7 +29,7 @@ const EditTransactionModal = ({ isOpen, onClose, transaction, onUpdate }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4">Editar Transação</h2>
+        <h2 className="text-xl font-bold mb-4">Edit Transaction</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
@@ -52,8 +52,8 @@ const EditTransactionModal = ({ isOpen, onClose, transaction, onUpdate }) => {
             onChange={(e) => setType(e.target.value)}
             className="w-full border p-2 rounded"
           >
-            <option value="entry">Entrada</option>
-            <option value="outlet">Saída</option>
+            <option value="entry">Entry</option>
+            <option value="outlet">Outlet</option>
           </select>
           <div className="flex justify-end gap-2">
             <button
@@ -61,13 +61,13 @@ const EditTransactionModal = ({ isOpen, onClose, transaction, onUpdate }) => {
               onClick={onClose}
               className="px-4 py-2 bg-gray-300 rounded"
             >
-              Cancelar
+              Cancel
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded"
             >
-              Salvar
+              Save
             </button>
           </div>
         </form>
