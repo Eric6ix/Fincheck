@@ -10,7 +10,7 @@ const router = express.Router();
 router.use(authMiddleware);
 
 router.get("/transaction", authorizeRole("ADMIN", "DEV"), exportTransaction);
-router.get('/transaction/csv', exportTransactionCSV);
-router.get('/transaction/pdf', exportTransactionPDF);
+router.get("/transaction/csv", exportTransactionCSV);
+router.get("/transaction/pdf", exportTransactionPDF);
 
 export default router;
