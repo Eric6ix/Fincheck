@@ -8,6 +8,7 @@ import SummaryCards from "../components/SummaryCards";
 import TransactionTable from "../components/TransactionTable";
 import TransactionForm from "../components/TransactionForm";
 import EditTransactionModal from "../components/EditTransactionModal";
+import { handleExportCSV, handleExportPDF } from "../context/exportPDFendCSV";
 import api from "../services/api";
 
 const Dashboard = () => {
@@ -84,7 +85,7 @@ const Dashboard = () => {
       const successCreat = [...transaction, creat];
       setTransaction(successCreat);
       CalculateSummary(successCreat);
-      fetchTransactions
+      fetchTransactions;
     } catch (err) {
       console.error("Erro when add transaction:", err.message);
     }
@@ -103,50 +104,11 @@ const Dashboard = () => {
     try {
       await deleteTransaction(id);
       setTransaction((prev) => prev.filter((tx) => tx.id !== id));
-      fetchTransactions
+      fetchTransactions;
       setTransaction(updated);
       CalculateSummary(updated);
     } catch (error) {
       console.error("Erro when delet transaction:", error);
-    }
-  };
-
-  const handleExportPDF = async () => {
-    try {
-      const response = await api.get("/transactions/export/pdf", {
-        responseType: "blob",
-      });
-
-      const blob = new Blob([response.data], { type: "application/pdf" });
-      const url = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "transacoes.pdf");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error("Erro when export PDF:", error);
-    }
-  };
-  const handleExportCSV = async () => {
-    try {
-      const response = await api.get("/transactions/export/csv", {
-        responseType: "blob",
-      });
-
-      const blob = new Blob([response.data], { type: "text/csv" });
-      const url = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "transacoes.csv");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error("Erro when export CSV:", error);
     }
   };
 
@@ -239,8 +201,7 @@ const Dashboard = () => {
       </div>
 
       {/* Formulário de nova transação */}
-      <TransactionForm onAdd={handleAddTransaction} 
-      CalculateSummary />
+      <TransactionForm onAdd={handleAddTransaction} CalculateSummary />
 
       {/* Tabela de transações */}
       <TransactionTable
