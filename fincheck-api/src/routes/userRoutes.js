@@ -3,7 +3,6 @@ import {
   getUser,
   updateUser,
   deleteUser,
-  // deleteUser,
 } from "../controllers/userController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { authorizeRole } from "../middlewares/authorizeRole.js";

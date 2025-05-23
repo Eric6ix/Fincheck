@@ -12,7 +12,7 @@ const Login = () => {
     e.preventDefault();
 
     if (!email || !password) {
-      return setError("Preencha todos os campos.");
+      return setError("Please fill in all the fields.");
     }
 
     try {
@@ -20,10 +20,10 @@ const Login = () => {
       const { token } = response.data;
       const { name } = response.data.user;
       localStorage.setItem("token", token);
-      alert(`Bem-Vindo ${name}`)
+      alert(`Welcome ${name}`)
       navigate("/dashboard");
     } catch (err) {
-      setError("Credenciais inválidas.");
+      setError("Invalid credentials.");
     }
   };
 
@@ -40,7 +40,7 @@ const Login = () => {
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
+            <label className="block text-sm font-medium mb-1">E-mail</label>
             <input
               type="email"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -50,7 +50,7 @@ const Login = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Senha</label>
+            <label className="block text-sm font-medium mb-1">Password</label>
             <input
               type="password"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -63,17 +63,17 @@ const Login = () => {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300"
           >
-            Entrar
+            Login
           </button>
         </form>
 
         <p className="text-sm text-center mt-4">
-          Não tem conta?{" "}
+          Don't have an account?{" "}
           <a
-            href="/register"
+            href="/"
             className="text-blue-600 hover:underline font-medium"
           >
-            Cadastre-se
+            Register
           </a>
         </p>
       </div>

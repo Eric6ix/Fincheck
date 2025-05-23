@@ -12,7 +12,6 @@ import { getSummary } from "../controllers/transactionController.js";
 
 const router = express.Router();
 
-// Todas as rotas abaixo exigem token (usuário logado)
 router.use(authMiddleware);
 router.get("/export/pdf", exportTransactionsPDF);
 router.get("/export/csv", exportTransactionsCSV);

@@ -23,7 +23,7 @@ const Register = () => {
         password,
       });
       navigate("/");
-      alert(`${name} registrado com êxeto`)
+      alert(`${name} registrado com êxeto`);
     } catch (err) {
       setError("Credenciais inválidas.");
     }
@@ -42,30 +42,30 @@ const Register = () => {
 
         <form onSubmit={handleRegister} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium mb-1">Nome</label>
             <input
               type="text"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Your first name"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
             <input
               type="email"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="example@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Senha</label>
             <input
               type="password"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -75,13 +75,13 @@ const Register = () => {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300"
           >
-            Cadastrar-se
+            Register
           </button>
 
           <p className="text-sm text-center mt-4">
-            Já tem uma conta?{" "}
-            <a href="/" className="text-blue-600 hover:underline">
-              Faça login
+            have an account?{" "}
+            <a href="/login" className="text-blue-600 hover:underline">
+              Make the login
             </a>
           </p>
         </form>
