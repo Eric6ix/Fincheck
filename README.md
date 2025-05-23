@@ -1,3 +1,4 @@
+
 # 💰 FinCheck
 
 Aplicação web para **gestão financeira pessoal**, desenvolvida com foco em aprendizado fullstack e organização de finanças de forma simples e intuitiva.
@@ -24,14 +25,18 @@ Aplicação web para **gestão financeira pessoal**, desenvolvida com foco em ap
 
 ## ✨ Funcionalidades atuais
 
-- Cadastro e login de usuários com autenticação via token JWT.
-- Criação de transações financeiras (entrada/saída).
-- Listagem de transações do usuário logado.
-- Exclusão de transações.
-- Interface responsiva e moderna.
+- Cadastro e login de usuários com autenticação via token JWT e refresh token.
+- Criação, edição e exclusão de transações financeiras (entry/outlet).
+- Relacionamento de transações com categorias personalizadas.
+- Filtros por período (data) e categoria no dashboard.
+- Dashboard com atualização reativa (após qualquer ação).
+- Exportação de transações em PDF e CSV.
+- Resumo financeiro dinâmico com cards de entrada, saída e saldo total.
+- Interface totalmente em inglês.
+- Interface responsiva e moderna com Tailwind CSS.
 - Proteção de rotas via token JWT.
 - Docker para ambiente local do PostgreSQL.
-  
+
 ---
 
 ## 📌 Como rodar o projeto
@@ -75,7 +80,7 @@ Aplicação web para **gestão financeira pessoal**, desenvolvida com foco em ap
 
 6. **Rode o frontend**
    ```bash
-   cd ../fincheck-web
+   cd ../fincheck-frontend
    npm install
    npm run dev
    ```
@@ -84,10 +89,11 @@ Aplicação web para **gestão financeira pessoal**, desenvolvida com foco em ap
 
 ## 💬 Principais desafios
 
-- Entender e configurar corretamente a autenticação JWT com expiração.
-- Manuseio do Prisma e relações no banco (como transações e categorias).
-- Manter a persistência de dados via Docker e PostgreSQL local.
-- Proteger as rotas da aplicação com base no token do usuário.
+- Implementar autenticação segura com JWT e refresh token.
+- Lidar com relações entre tabelas no Prisma (ex: categoria e transações).
+- Criar filtros dinâmicos e atualizações reativas no dashboard.
+- Exportar dados para arquivos PDF e CSV no backend.
+- Separar responsabilidades no frontend (modularização de funções).
 
 ---
 
@@ -99,4 +105,4 @@ Desenvolvido por [Eric Martins (Zenkai)](https://github.com/Eric6ix?tab=reposito
 
 ## 📌 Status
 
-🚧 Projeto em desenvolvimento — novas funcionalidades serão adicionadas em breve.
+🚀 Projeto em constante evolução — novas funcionalidades estão sendo desenvolvidas.
