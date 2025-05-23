@@ -81,9 +81,10 @@ const Dashboard = () => {
   const handleAddTransaction = async (creatTransaction) => {
     try {
       const creat = await createTransaction(creatTransaction);
-      const successCreat = [...transacoes, creat];
+      const successCreat = [...transaction, creat];
       setTransaction(successCreat);
       CalculateSummary(successCreat);
+      fetchTransactions
     } catch (err) {
       console.error("Erro when add transaction:", err.message);
     }
@@ -102,7 +103,9 @@ const Dashboard = () => {
     try {
       await deleteTransaction(id);
       setTransaction((prev) => prev.filter((tx) => tx.id !== id));
-      CalculateSummary();
+      fetchTransactions
+      setTransaction(updated);
+      CalculateSummary(updated);
     } catch (error) {
       console.error("Erro when delet transaction:", error);
     }
@@ -222,7 +225,7 @@ const Dashboard = () => {
           <label className="block text-sm text-gray-600">Category:</label>
           <select
             value={CategorySelected}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) => setCategorySelected(e.target.value)}
             className="border rounded px-2 py-1"
           >
             <option value="">All</option>
@@ -236,13 +239,15 @@ const Dashboard = () => {
       </div>
 
       {/* Formulário de nova transação */}
-      <TransactionForm onAdd={handleAddTransaction} />
+      <TransactionForm onAdd={handleAddTransaction} 
+      CalculateSummary />
 
       {/* Tabela de transações */}
       <TransactionTable
         transacoes={transaction}
         onDelete={handleDeleteTransaction}
         onEdit={handleOpenModal}
+        fetchTransactions
       />
 
       {/* Modal de edição */}
@@ -251,6 +256,7 @@ const Dashboard = () => {
         onClose={() => setModalOpen(false)}
         transaction={transactionSelected}
         onUpdate={handleUpdateTransaction}
+        fetchTransactions
       />
     </main>
   );

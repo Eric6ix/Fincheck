@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const TransactionForm = ({ onAdd }) => {
   const [title, setTitle] = useState("");
@@ -38,13 +38,13 @@ const TransactionForm = ({ onAdd }) => {
           type="number"
           placeholder="Value"
           value={value}
-          onChange={(e) => setValor(e.target.value)}
+          onChange={(e) => setValue(e.target.value)}
           className="border rounded-lg p-2"
           required
         />
         <select
           value={type}
-          onChange={(e) => setTipo(e.target.value)}
+          onChange={(e) => setType(e.target.value)}
           className="border rounded-lg p-2"
         >
           <option value="entry">Entry</option>
