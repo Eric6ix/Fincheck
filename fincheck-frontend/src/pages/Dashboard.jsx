@@ -11,6 +11,7 @@ import EditTransactionModal from "../components/EditTransactionModal";
 import { handleExportCSV, handleExportPDF } from "../context/exportPDFendCSV";
 import api from "../services/api";
 
+
 const Dashboard = () => {
   const [transaction, setTransaction] = useState([]);
   const [summary, setSummary] = useState({ entry: 0, outlet: 0, wallet: 0 });
@@ -44,7 +45,7 @@ const Dashboard = () => {
     }
   };
 
-  const clenaFilter = () => {
+  const cleanFilter = () => {
     setStartDate("");
     setEndDate("");
     fetchTransactions();
@@ -59,7 +60,7 @@ const Dashboard = () => {
     try {
       const res = await api.get("/category");
       setCategory(res.data);
-      CalculateSummary();
+      CalculateSummary(res.data);
     } catch (err) {
       console.error("Erro ao buscar categorias:", err.message);
     }
@@ -130,7 +131,7 @@ const Dashboard = () => {
           onClick={handleLogout}
           className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
         >
-          Exit
+          logout
         </button>
 
         <button
@@ -178,7 +179,7 @@ const Dashboard = () => {
           Filter
         </button>
         <button
-          onClick={clenaFilter}
+          onClick={cleanFilter}
           className="bg-gray-400 text-white px-4 py-2 rounded"
         >
           Clean

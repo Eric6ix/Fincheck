@@ -3,7 +3,7 @@ import {
   createTransaction,
   updateTransaction,
   deleteTransaction,
-  getFilterTransactions,
+  getTransactions,
   exportTransactionsCSV,
   exportTransactionsPDF,
 } from "../controllers/transactionController.js";
@@ -16,7 +16,7 @@ router.use(authMiddleware);
 router.get("/export/pdf", exportTransactionsPDF);
 router.get("/export/csv", exportTransactionsCSV);
 router.get("/summary", getSummary);
-router.get("/", getFilterTransactions);
+router.get("/", getTransactions);
 router.post("/", createTransaction);
 router.put("/:id", updateTransaction);
 router.delete("/:id", deleteTransaction);

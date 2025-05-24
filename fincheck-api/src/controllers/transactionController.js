@@ -4,12 +4,13 @@ import { Parser } from "json2csv";
 
 // POST: http://localhost:3333/api/transactions
 export const createTransaction = async (req, res) => {
-  const { title, amount, type } = req.body;
+  const { title, amount, type, categoryType} = req.body;
   const userId = req.user.userId;
+  const name = req.user.name;
 
   try {
     const transaction = await prisma.transaction.create({
-      data: { title, amount: parseFloat(amount), type, userId },
+      data: { title, amount: parseFloat(amount), type, userId, name, categoryType},
     });
 
     res.status(201).json(transaction);
@@ -18,20 +19,25 @@ export const createTransaction = async (req, res) => {
     console.log(err);
   }
 };
-
-// GET: http://localhost:3333/api/transactions
+// GET: /api/transactions?month=05&year=2025&type=entry&categoryType=Salary
 export const getTransactions = async (req, res) => {
   const userId = req.user.userId;
-  const { month, year, type, categoryId, startDate, endDate } = req.query;
+  const { month, year, type, categoryType, startDate, endDate } = req.query;
 
   try {
     const filter = { userId };
 
+    // Filtro por tipo (entry / outlet)
     if (type) {
       filter.type = type;
     }
 
-    // Filtro por mês e ano (caso você continue usando)
+    // Filtro por categoria (usando enum direto)
+    if (categoryType) {
+      filter.categoryType = categoryType;
+    }
+
+    // Filtro por mês e ano (exclusivo)
     if (month && year) {
       const start = new Date(`${year}-${month}-01`);
       const end = new Date(start);
@@ -43,7 +49,7 @@ export const getTransactions = async (req, res) => {
       };
     }
 
-    // Filtro por intervalo de datas (caso venha do frontend)
+    // Filtro por intervalo de datas (substitui o filtro anterior se ambos forem enviados)
     if (startDate && endDate) {
       filter.createdAt = {
         gte: new Date(startDate),
@@ -51,15 +57,9 @@ export const getTransactions = async (req, res) => {
       };
     }
 
-    // 🆕 Filtro por categoria
-    if (categoryId) {
-      filter.categoryId = categoryId;
-    }
-
     const transactions = await prisma.transaction.findMany({
       where: filter,
       orderBy: { createdAt: "desc" },
-      include: { category: true }, // caso queira exibir a categoria
     });
 
     res.json(transactions);
@@ -68,6 +68,7 @@ export const getTransactions = async (req, res) => {
     res.status(500).json({ error: "Erro ao buscar transações com filtros" });
   }
 };
+
 
 // PUT: http://localhost:3333/api/transactions/:id
 export const updateTransaction = async (req, res) => {
@@ -123,34 +124,6 @@ export const deleteTransaction = async (req, res) => {
 };
 
 // GET: /api/transactions?startDate=2024-01-01&endDate=2024-01-31&categoryId=abc123
-export const getFilterTransactions = async (req, res) => {
-  const userId = req.user.userId;
-  const { startDate, endDate, categoryId } = req.query;
-
-  try {
-    const where = {
-      userId,
-      ...(startDate &&
-        endDate && {
-          createdAt: {
-            gte: new Date(startDate),
-            lte: new Date(endDate),
-          },
-        }),
-      ...(categoryId && { categoryId }),
-    };
-
-    const transactions = await prisma.transaction.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      include: { category: true },
-    });
-
-    res.json(transactions);
-  } catch (err) {
-    res.status(500).json({ error: "Erro ao buscar transações" });
-  }
-};
 
 export const getSummary = async (req, res) => {
   const userId = req.user.userId;

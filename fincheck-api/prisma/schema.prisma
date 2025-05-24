@@ -15,27 +15,30 @@ model User {
   wallet       Float         @default(0.0)
   role         UserRole      @default(user)
   transactions Transaction[]
-  Category     Category[]
 }
 
 model Transaction {
-  id         String          @id @default(cuid())
-  title      String
-  amount     Float
-  type       TransactionType  @default(entry)
-  createdAt  DateTime        @default(now())
-  userId     String
-  user       User            @relation(fields: [userId], references: [id])
-  categoryId String?
-  category   Category?       @relation(fields: [categoryId], references: [id])
+  id        String          @id @default(cuid())
+  title     String
+  amount    Float
+  type      TransactionType @default(entry)
+  createdAt DateTime        @default(now())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id])
+  categoryType  Category        @default(Others)
 }
 
-model Category {
-  id           String        @id @default(cuid())
-  name         String
-  transactions Transaction[]
-  userId       String
-  user         User          @relation(fields: [userId], references: [id])
+enum Category {
+  Salary
+  Food
+  Transport
+  Health
+  Entertainment
+  Shopping
+  Education
+  Bills
+  Investment
+  Others
 }
 
 enum TransactionType {
