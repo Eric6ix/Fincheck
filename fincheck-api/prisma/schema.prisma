@@ -12,7 +12,6 @@ model User {
   name         String
   email        String        @unique
   password     String
-  wallet       Float         @default(0.0)
   role         UserRole      @default(user)
   transactions Transaction[]
 }

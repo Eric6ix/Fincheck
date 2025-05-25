@@ -13,7 +13,6 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "wallet" DOUBLE PRECISION NOT NULL DEFAULT 0.0,
     "role" "UserRole" NOT NULL DEFAULT 'user',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")

@@ -13,7 +13,6 @@ async function main() {
       name: "Erica",
       email: "erica@gmail.com",
       password: hashedPassword,
-      wallet: 1000.0,
       role: "user",
     },
   });

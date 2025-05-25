@@ -7,32 +7,40 @@ dotenv.config();
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password, wallet} = req.body;
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password)
+      return res.status(400).json({ error: "Fill in all fields" });
+
+    if (password.length < 5) {
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 5 characters" });
+    }
+ 
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser)
-      return res.status(400).json({ error: "E-mail já cadastrado!" });
+      return res.status(400).json({ error: "E-mail Already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
       data: { name, email, password: hashedPassword, wallet, role: "user" },
     });
-
-    res
-      .status(201)
-      .json( "sucesso!" );
+    res.status(201).json(`successfully registered user ${name}`);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao registrar usuário" });
+    res.status(500).json({ error: "Error by registering user" });
     console.log(error);
   }
 };
 
-
-
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: "Fill in all fields" });
+    }
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(400).json({ error: "Credenciais inválidas" });
@@ -54,7 +62,6 @@ export const login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        wallet: user.wallet,
       },
     });
   } catch (error) {

@@ -4,21 +4,31 @@ import { Parser } from "json2csv";
 
 // POST: http://localhost:3333/api/transactions
 export const createTransaction = async (req, res) => {
-  const { title, amount, type, categoryType} = req.body;
+  const { title, amount, type, categoryType } = req.body;
   const userId = req.user.userId;
-  const name = req.user.name;
+
+  if (!title || !amount || !type || !categoryType) {
+    return res.status(400).json({ error: "Fill in all mandatory fields." });
+  }
 
   try {
     const transaction = await prisma.transaction.create({
-      data: { title, amount: parseFloat(amount), type, userId, name, categoryType},
+      data: {
+        title,
+        amount: parseFloat(amount),
+        type,
+        categoryType: categoryType,
+        userId,
+      },
     });
 
     res.status(201).json(transaction);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao criar transação" });
-    console.log(err);
+    console.error(error);
+    res.status(500).json({ error: "Error creating transaction" });
   }
 };
+
 // GET: /api/transactions?month=05&year=2025&type=entry&categoryType=Salary
 export const getTransactions = async (req, res) => {
   const userId = req.user.userId;
@@ -69,32 +79,35 @@ export const getTransactions = async (req, res) => {
   }
 };
 
-
 // PUT: http://localhost:3333/api/transactions/:id
 export const updateTransaction = async (req, res) => {
   const { id } = req.params;
-  const { title, amount, type, categoryId } = req.body;
   const userId = req.user.userId;
+  const walletUser = req.user;
+  const { title, amount, type, categoryType } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "Transaction ID is mandatory" });
+  }
+
+  if (!title || !amount || !type || !categoryType) {
+    return res.status(400).json({ error: "Fill in all mandatory fields." });
+  }
 
   try {
     const existing = await prisma.transaction.findUnique({ where: { id } });
 
-    if (!title || !amount || !type) {
-      return res
-        .status(400)
-        .json({ error: "Preencha todos os campos obrigatórios." });
+    if (!existing || existing.userId !== userId) {
+      return res.status(404).json({ error: "Transaction unintegrated" });
     }
 
-    if (!existing || existing.userId !== userId) {
-      return res.status(404).json({ error: "Transação não encontrada" });
-    }
-    if (!["entry", "outlet"].includes(type)) {
-      return res.status(400).json({ error: "Tipo de transação inválido." });
+    if (type === "outlet" && parseFloat(walletUser) < parseFloat(amount)) {
+      return res.status(400).json({ error: "Insufficient balance" });
     }
 
     const updated = await prisma.transaction.update({
       where: { id },
-      data: { title, amount: parseFloat(amount), type, categoryId },
+      data: { title, amount: parseFloat(amount), type, categoryType },
     });
 
     res.json(updated);
