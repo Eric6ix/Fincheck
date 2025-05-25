@@ -27,6 +27,7 @@ describe("Testes de Usuário", () => {
     expect(response.body[0]).toHaveProperty("id");    
     expect(response.body[0]).toHaveProperty("name");
     expect(response.body[0]).toHaveProperty("email");
+    expect(response.body[0]).toHaveProperty("wallet");
   });
 });
 

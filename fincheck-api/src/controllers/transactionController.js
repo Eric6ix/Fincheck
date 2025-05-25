@@ -124,7 +124,6 @@ export const deleteTransaction = async (req, res) => {
 };
 
 // GET: /api/transactions?startDate=2024-01-01&endDate=2024-01-31&categoryId=abc123
-
 export const getSummary = async (req, res) => {
   const userId = req.user.userId;
   const { month, year } = req.query;

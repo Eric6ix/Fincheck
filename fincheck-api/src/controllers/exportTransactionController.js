@@ -13,7 +13,7 @@ export const exportTransaction = async (req, res) => {
     // Formatando a data para cada transação
     const formattedTransactions = transactions.map(transaction => ({
       ...transaction,
-      createdAt: new Date(transaction.createdAt).toLocaleDateString('pt-BR'), // <-- aqui
+      createdAt: new Date(transaction.createdAt).toLocaleDateString('pt-BR'), 
     }));
 
     const fields = ['id', 'title', 'amount', 'type', 'createdAt'];
