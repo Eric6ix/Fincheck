@@ -12,6 +12,13 @@ export const createTransaction = async (req, res) => {
   }
 
   try {
+
+    if (type === "outlet") {
+      const currentBalance = await getSummary(userId);
+      if (currentBalance < parseFloat(amount)) {
+        return res.status(400).json({ error: "Insufficient balance" });
+      }
+    }
     const transaction = await prisma.transaction.create({
       data: {
         title,
@@ -138,47 +145,21 @@ export const deleteTransaction = async (req, res) => {
 
 // GET: /api/transactions?startDate=2024-01-01&endDate=2024-01-31&categoryId=abc123
 export const getSummary = async (req, res) => {
-  const userId = req.user.userId;
-  const { month, year } = req.query;
+  const [income, outlet] = await Promise.all([
+    prisma.transaction.aggregate({
+      _sum: { amount: true },
+      where: { userId, type: "entry" },
+    }),
+    prisma.transaction.aggregate({
+      _sum: { amount: true },
+      where: { userId, type: "outlet" },
+    }),
+  ]);
 
-  try {
-    let dateFilter = { userId };
+  const incomeTotal = income._sum.amount || 0;
+  const outletTotal = outlet._sum.amount || 0;
 
-    // Se mês e ano forem fornecidos, aplica filtro de data
-    if (month && year) {
-      const startDate = new Date(`${year}-${month}-01`);
-      const endDate = new Date(startDate);
-      endDate.setMonth(endDate.getMonth() + 1);
-
-      dateFilter.createdAt = {
-        gte: startDate,
-        lt: endDate,
-      };
-    }
-
-    const [entry, outlet] = await Promise.all([
-      prisma.transaction.aggregate({
-        _sum: { amount: true },
-        where: { ...dateFilter, type: "entry" }, // <-- corrigido
-      }),
-      prisma.transaction.aggregate({
-        _sum: { amount: true },
-        where: { ...dateFilter, type: "outlet" }, // <-- corrigido
-      }),
-    ]);
-
-    const totalEntry = entry._sum.amount || 0;
-    const totalOutlet = outlet._sum.amount || 0;
-    const balance = totalEntry - totalOutlet;
-
-    res.json({
-      totalEntry,
-      totalOutlet,
-      balance,
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Erro ao calcular resumo financeiro" });
-  }
+  return incomeTotal - outletTotal;
 };
 
 export const exportTransactionsPDF = async (req, res) => {
