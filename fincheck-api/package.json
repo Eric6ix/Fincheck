@@ -5,9 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "createDEV": "node prisma/seedDEV.js",
-    "createADMIN": "node prisma/seedADMIN.js",
-    "createUser": "node prisma/seedUser.js",
+    "users": "node prisma/seedUsers.js",
+    "transactions": "node prisma/trnsactionsSeed.js",
     "test": "vitest"
   },
   "keywords": [],
