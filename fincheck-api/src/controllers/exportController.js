@@ -18,7 +18,7 @@ export const exportTransactionCSV = async (req, res) => {
       return res.status(404).json({ error: 'Nenhuma transação encontrada para exportar.' });
     }
 
-    const fields = ['id', 'title', 'amount', 'type', 'createdAt', "categoryId"];
+    const fields = ['id', 'title', 'amount', 'type', 'createdAt', "categoryType"];
     const parser = new Parser({ fields });
     const csv = parser.parse(transactions);
 

@@ -28,17 +28,7 @@ async function main() {
     },
   });
 
-   const seedDEV = await prisma.user.upsert({
-    where: { email: "zenkai@gmail.com" },
-    update: {},
-    create: {
-      name: "ZenkaiDEV",
-      email: "zenkai@gmail.com",
-      password: hashedPassword,
-      role: "DEV",
-    },
-  });
-  console.log("criado:", seedDEV, seedADMIN, seedUser);
+  console.log("criado:", seedADMIN, seedUser);
 }
 
 main()

@@ -12,13 +12,12 @@ import { getSummary } from "../controllers/transactionController.js";
 
 const router = express.Router();
 
-router.use(authMiddleware);
-router.get("/export/pdf", exportTransactionsPDF);
-router.get("/export/csv", exportTransactionsCSV);
-router.get("/summary", getSummary);
-router.get("/", getTransactions);
-router.post("/", createTransaction);
-router.put("/:id", updateTransaction);
-router.delete("/:id", deleteTransaction);
+router.get("/export/pdf", authMiddleware, exportTransactionsPDF);
+router.get("/export/csv", authMiddleware, exportTransactionsCSV);
+router.get("/summary", authMiddleware, getSummary);
+router.get("/", authMiddleware, getTransactions);
+router.post("/", authMiddleware, createTransaction);
+router.put("/:id", authMiddleware, updateTransaction);
+router.delete("/:id", authMiddleware, deleteTransaction);
 
 export default router;

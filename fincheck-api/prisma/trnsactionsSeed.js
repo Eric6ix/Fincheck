@@ -4,13 +4,21 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 const categories = [
-  "Salary", "Food", "Transport", "Health", "Entertainment",
-  "Shopping", "Education", "Bills", "Investment", "Others"
+  "Salary",
+  "Food",
+  "Transport",
+  "Health",
+  "Entertainment",
+  "Shopping",
+  "Education",
+  "Bills",
+  "Investment",
+  "Others",
 ];
 
 const titles = {
   entry: ["Freelance Job", "Bonus", "Salary", "Investment Return", "Gift"],
-  outlet: ["Groceries", "Bus Ticket", "Netflix", "Pharmacy", "Online Shopping"]
+  outlet: ["Groceries", "Bus Ticket", "Netflix", "Pharmacy", "Online Shopping"],
 };
 
 const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -29,13 +37,13 @@ async function main() {
   // Cria usuário fake (ou usa existente)
   const password = await bcrypt.hash("123456", 10);
   const user = await prisma.user.upsert({
-    where: { email: "demo@fincheck.com" },
+    where: { email: "zenkai@gmail.com" },
     update: {},
     create: {
-      name: "Demo User",
-      email: "demo@fincheck.com",
-      password,
-      role: "user",
+      name: "ZenkaiDEV",
+      email: "zenkai@gmail.com",
+      password: hashedPassword,
+      role: "DEV",
     },
   });
 

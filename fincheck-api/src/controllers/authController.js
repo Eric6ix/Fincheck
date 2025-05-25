@@ -17,7 +17,6 @@ export const register = async (req, res) => {
         .status(400)
         .json({ error: "Password must be at least 5 characters" });
     }
- 
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser)
@@ -36,8 +35,10 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+  
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).json({ error: "Fill in all fields" });
     }
