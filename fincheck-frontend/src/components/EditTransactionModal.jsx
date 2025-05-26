@@ -4,12 +4,14 @@ const EditTransactionModal = ({ isOpen, onClose, transaction, onUpdate }) => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("");
+  const [categoryType, setCategoryType] = useState("");
 
   useEffect(() => {
     if (transaction) {
       setTitle(transaction.title);
       setAmount(transaction.amount);
       setType(transaction.type);
+      setCategoryType(transaction.categoryType);
     }
   }, [transaction]);
 
@@ -20,6 +22,7 @@ const EditTransactionModal = ({ isOpen, onClose, transaction, onUpdate }) => {
       title,
       amount: parseFloat(amount),
       type,
+      categoryType,
     });
     onClose(); 
   };
@@ -54,6 +57,22 @@ const EditTransactionModal = ({ isOpen, onClose, transaction, onUpdate }) => {
           >
             <option value="entry">Entry</option>
             <option value="outlet">Outlet</option>
+          </select>
+          <select
+            value={categoryType}
+            onChange={(e) => setType(e.target.value)}
+            className="w-full border p-2 rounded"
+          >
+            <option value="Salary">Salary</option>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Health">Health</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Education">Education</option>
+            <option value="Bills">Bills</option>
+            <option value="TraInvestmentnsport">Investment</option>
+            <option value="Others">Others</option>
           </select>
           <div className="flex justify-end gap-2">
             <button

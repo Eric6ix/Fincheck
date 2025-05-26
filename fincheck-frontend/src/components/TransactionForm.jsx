@@ -1,9 +1,10 @@
 import { useState } from "react";
-
+import { categories } from "../services/transactions";
 const TransactionForm = ({ onAdd }) => {
   const [title, setTitle] = useState("");
   const [value, setValue] = useState("");
   const [type, setType] = useState("entry");
+  const [categoryType, setCategoryType] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -12,12 +13,14 @@ const TransactionForm = ({ onAdd }) => {
       title: title,
       amount: parseFloat(value),
       type: type,
+      categoryType: categoryType,
     };
 
     onAdd(newTransaction);
     setTitle("");
     setValue("");
     setType("");
+    setCategoryType("");
   };
   return (
     <form
@@ -47,8 +50,21 @@ const TransactionForm = ({ onAdd }) => {
           onChange={(e) => setType(e.target.value)}
           className="border rounded-lg p-2"
         >
-          <option value="entry">Entry</option>
-          <option value="outlet">Outlet</option>
+          <option value="">Type</option>
+          <option value="Entry">Entry</option>
+          <option value="Outlet">Outlet</option>
+        </select>
+        <select
+          value={categoryType}
+          onChange={(e) => setCategoryType(e.target.value)}
+          className="border rounded-lg p-2"
+        >
+          <option value="">Category Type</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
         </select>
       </div>
       <button

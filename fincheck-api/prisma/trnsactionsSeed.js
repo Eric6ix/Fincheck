@@ -17,8 +17,8 @@ const categories = [
 ];
 
 const titles = {
-  entry: ["Freelance Job", "Bonus", "Salary", "Investment Return", "Gift"],
-  outlet: ["Groceries", "Bus Ticket", "Netflix", "Pharmacy", "Online Shopping"],
+  Entry: ["Freelance Job", "Bonus", "Salary", "Investment Return", "Gift"],
+  Outlet: ["Groceries", "Bus Ticket", "Netflix", "Pharmacy", "Online Shopping"],
 };
 
 const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -35,21 +35,21 @@ async function main() {
   console.log("🌱 Seeding FinCheck...");
 
   // Cria usuário fake (ou usa existente)
-  const password = await bcrypt.hash("123456", 10);
+  const password = await bcrypt.hash("123123", 10);
   const user = await prisma.user.upsert({
     where: { email: "zenkai@gmail.com" },
     update: {},
     create: {
       name: "ZenkaiDEV",
       email: "zenkai@gmail.com",
-      password: hashedPassword,
+      password,
       role: "DEV",
     },
   });
 
   // Cria 30 transações aleatórias
-  for (let i = 0; i < 30; i++) {
-    const type = Math.random() > 0.4 ? "entry" : "outlet"; // mais entradas
+  for (let i = 0; i < 20; i++) {
+    const type = Math.random() > 0.4 ? "Entry" : "Outlet"; // mais entradas
     const categoryType = getRandom(categories);
     const amount = randomAmount();
     const title = getRandom(titles[type]);

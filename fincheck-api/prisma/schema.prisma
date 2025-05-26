@@ -20,7 +20,7 @@ model Transaction {
   id        String          @id @default(cuid())
   title     String
   amount    Float
-  type      TransactionType @default(entry)
+  type      TransactionType @default(Entry)
   createdAt DateTime        @default(now())
   userId    String
   user      User            @relation(fields: [userId], references: [id])
@@ -41,8 +41,8 @@ enum Category {
 }
 
 enum TransactionType {
-  entry
-  outlet
+  Entry
+  Outlet
 }
 
 enum UserRole {
@@ -52,6 +52,6 @@ enum UserRole {
 }
 
 //npx prisma migrate reset
-//npx prisma migrate dev --name add-role-to-user "modelo de exemplo"
+//npx prisma migrate dev --name add-rol e-to-user "modelo de exemplo"
 //docker run --name fincheck-db -e POSTGRES_PASSWORD=root -e POSTGRES_DB=fincheck-schema -p 5432:5432 -d postgres
 //npx prisma migrate dev --name init

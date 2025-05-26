@@ -53,26 +53,15 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchTransactions();
-    fetchCategory();
   }, []);
-
-  const fetchCategory = async () => {
-    try {
-      const res = await api.get("/category");
-      setCategory(res.data);
-      CalculateSummary(res.data);
-    } catch (err) {
-      console.error("Erro ao buscar categorias:", err.message);
-    }
-  };
 
   const CalculateSummary = (transaction) => {
     const entry = transaction
-      .filter((t) => t.type === "entry")
+      .filter((t) => t.type === "Entry")
       .reduce((acc, t) => acc + t.amount, 0);
 
     const outlet = transaction
-      .filter((t) => t.type === "outlet")
+      .filter((t) => t.type === "Outlet")
       .reduce((acc, t) => acc + t.amount, 0);
 
     const wallet = entry - outlet;

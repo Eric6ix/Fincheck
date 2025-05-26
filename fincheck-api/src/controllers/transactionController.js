@@ -13,7 +13,7 @@ export const createTransaction = async (req, res) => {
 
   try {
 
-    if (type === "outlet") {
+    if (type === "Outlet") {
       const currentBalance = await getSummary(userId);
       if (currentBalance < parseFloat(amount)) {
         return res.status(400).json({ error: "Insufficient balance" });
@@ -148,11 +148,11 @@ export const getSummary = async (req, res) => {
   const [income, outlet] = await Promise.all([
     prisma.transaction.aggregate({
       _sum: { amount: true },
-      where: { userId, type: "entry" },
+      where: { userId, type: "Entry" },
     }),
     prisma.transaction.aggregate({
       _sum: { amount: true },
-      where: { userId, type: "outlet" },
+      where: { userId, type: "Outlet" },
     }),
   ]);
 
