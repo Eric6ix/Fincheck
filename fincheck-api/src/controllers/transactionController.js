@@ -1,6 +1,8 @@
 import { prisma } from "../lib/prisma.js";
 import PDFDocument from "pdfkit";
 import { Parser } from "json2csv";
+import { hasSufficientBalance, adjustWallet, getWallet } from "./walletController.js";
+
 
 // POST: http://localhost:3333/api/transactions
 export const createTransaction = async (req, res) => {
