@@ -34,17 +34,34 @@ export const getWallet = async (req, res) => {
 };
 
 // Ajusta o wallet do usuário (add ou subtract)
-export const adjustWallet = async (userEmail, amount, operation) => {
+export const adjustWallet = async (userEmail, amount, type) => {
   const value = parseFloat(amount);
-  if (isNaN(value)) return;
 
+  if (isNaN(value)) {
+    throw new Error("Invalid amount");
+  }
+
+  // Converte o tipo para operação interna
+  let operation;
+  if (type === "Entry") {
+    operation = "add";
+  } else if (type === "Outlet") {
+    operation = "subtract";
+  } else {
+    throw new Error("Invalid transaction type");
+  }
+
+  // Atualiza a carteira do usuário
   await prisma.user.update({
     where: { email: userEmail },
     data: {
-      wallet: operation === "add" ? { increment: value } : { decrement: value },
+      wallet: operation === "add"
+        ? { increment: value }
+        : { decrement: value },
     },
   });
 };
+
 
 // Verifica se o usuário tem saldo suficiente
 export const hasSufficientBalance = async (userId, amount) => {

@@ -1,13 +1,20 @@
 import { prisma } from "../lib/prisma.js";
+import jwt from 'jsonwebtoken'
 import PDFDocument from "pdfkit";
 import { Parser } from "json2csv";
 import { hasSufficientBalance, adjustWallet, getWallet } from "./walletController.js";
-
+// import authMiddleware from "../middlewares/authMiddleware.js";
 
 // POST: http://localhost:3333/api/transactions
 export const createTransaction = async (req, res) => {
+  const token = req.header("Authorization");
+    
+    if (!token) return res.status(401).json({ error: "Acesso negado!" });
+    const decoded = jwt.verify(token.replace("Bearer ", ""), process.env.JWT_SECRET);
+  
+    req.user = decoded;
   const { title, amount, type, categoryType } = req.body;
-  const userId = req.user.userId;
+  const userEmail = req.user.userEmail;
 
   if (!title || !amount || !type || !categoryType) {
     return res.status(400).json({ error: "Fill in all mandatory fields." });
@@ -15,21 +22,16 @@ export const createTransaction = async (req, res) => {
 
   try {
 
-    if (type === "Outlet") {
-      const currentBalance = await getSummary(userId);
-      if (currentBalance < parseFloat(amount)) {
-        return res.status(400).json({ error: "Insufficient balance" });
-      }
-    }
     const transaction = await prisma.transaction.create({
       data: {
         title,
         amount: parseFloat(amount),
         type,
         categoryType: categoryType,
-        userId,
+        userId: req.user.userId,
       },
     });
+    adjustWallet(userEmail, amount, type);
 
     res.status(201).json(transaction);
   } catch (error) {
