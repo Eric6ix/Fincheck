@@ -7,15 +7,20 @@ dotenv.config();
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, wallet } = req.body;
 
-    if (!name || !email || !password)
+    if (!name || !email || !password || !wallet)
       return res.status(400).json({ error: "Fill in all fields" });
 
     if (password.length < 5) {
       return res
         .status(400)
         .json({ error: "Password must be at least 5 characters" });
+    }
+    if (wallet < 1000) {
+      return res
+        .status(400)
+        .json({ error: "Wallet must be at most 999" });
     }
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -35,7 +40,6 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  
   const { email, password } = req.body;
 
   try {
@@ -45,14 +49,13 @@ export const login = async (req, res) => {
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(400).json({ error: "Credenciais inválidas" });
-    
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword)
       return res.status(400).json({ error: "Credenciais inválidas" });
 
     const token = jwt.sign(
-      { userId: user.id, role: user.role },
+      { userId: user.id, role: user.role, wallet: user.wallet },
       process.env.JWT_SECRET,
       { expiresIn: "30d" }
     );
@@ -64,6 +67,7 @@ export const login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        wallet: user.wallet,
       },
     });
   } catch (error) {

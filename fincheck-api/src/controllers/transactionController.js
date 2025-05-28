@@ -143,23 +143,34 @@ export const deleteTransaction = async (req, res) => {
   }
 };
 
-// GET: /api/transactions?startDate=2024-01-01&endDate=2024-01-31&categoryId=abc123
 export const getSummary = async (req, res) => {
-  const [income, outlet] = await Promise.all([
-    prisma.transaction.aggregate({
-      _sum: { amount: true },
-      where: { userId, type: "Entry" },
-    }),
-    prisma.transaction.aggregate({
-      _sum: { amount: true },
-      where: { userId, type: "Outlet" },
-    }),
-  ]);
+  const userId = req.user.userId;
 
-  const incomeTotal = income._sum.amount || 0;
-  const outletTotal = outlet._sum.amount || 0;
+  try {
+    const [entry, outlet] = await Promise.all([
+      prisma.transaction.aggregate({
+        _sum: { amount: true },
+        where: { userId, type: "Entry" },
+      }),
+      prisma.transaction.aggregate({
+        _sum: { amount: true },
+        where: { userId, type: "Outlet" },
+      }),
+    ]);
 
-  return incomeTotal - outletTotal;
+    const entryTotal = entry._sum.amount || 0;
+    const outletTotal = outlet._sum.amount || 0;
+    const wallet = entryTotal - outletTotal;
+
+    res.json({
+      entry: entryTotal,
+      outlet: outletTotal,
+      wallet,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error generating summary" });
+  }
 };
 
 export const exportTransactionsPDF = async (req, res) => {

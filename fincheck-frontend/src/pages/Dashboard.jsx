@@ -8,6 +8,7 @@ import SummaryCards from "../components/SummaryCards";
 import TransactionTable from "../components/TransactionTable";
 import TransactionForm from "../components/TransactionForm";
 import EditTransactionModal from "../components/EditTransactionModal";
+import Sidebar from "../components/Sidebar";
 import { handleExportCSV, handleExportPDF } from "../context/exportPDFendCSV";
 import api from "../services/api";
 
@@ -19,7 +20,7 @@ const Dashboard = () => {
   const [transactionSelected, setTransactionSelected] = useState(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [category, setCategory] = useState([]);
+  const [categoryType, setCategory] = useState([]);
   const [CategorySelected, setCategorySelected] = useState("");
 
   const fetchTransactions = async () => {
@@ -114,28 +115,10 @@ const Dashboard = () => {
 
   return (
     <main className="p-6">
-      {/* Botão de logout */}
       <div className="flex justify-end mb-4">
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
-        >
-          logout
-        </button>
-
-        <button
-          onClick={handleExportPDF}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
-        >
-          Export PDF
-        </button>
-
-        <button
-          onClick={handleExportCSV}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
-        >
-          Export CSV
-        </button>
+        <button onClick={handleLogout}className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">logout</button>
+        <button onClick={handleExportPDF}className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">Export PDF</button>
+        <button onClick={handleExportCSV}className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">Export CSV</button>
       </div>
 
       {/* Cartões de resumo */}
@@ -181,7 +164,7 @@ const Dashboard = () => {
             className="border rounded px-2 py-1"
           >
             <option value="">All</option>
-            {category.map((cat) => (
+            {categoryType.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>

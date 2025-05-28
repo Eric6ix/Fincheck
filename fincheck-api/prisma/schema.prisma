@@ -12,6 +12,7 @@ model User {
   name         String
   email        String        @unique
   password     String
+  wallet       Float         @default(0.0)
   role         UserRole      @default(user)
   transactions Transaction[]
 }
@@ -52,6 +53,6 @@ enum UserRole {
 }
 
 //npx prisma migrate reset
-//npx prisma migrate dev --name add-rol e-to-user "modelo de exemplo"
+//npx prisma migrate dev --name reset "modelo de exemplo"
 //docker run --name fincheck-db -e POSTGRES_PASSWORD=root -e POSTGRES_DB=fincheck-schema -p 5432:5432 -d postgres
 //npx prisma migrate dev --name init

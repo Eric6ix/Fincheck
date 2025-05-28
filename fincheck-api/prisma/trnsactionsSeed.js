@@ -43,6 +43,7 @@ async function main() {
       name: "ZenkaiDEV",
       email: "zenkai@gmail.com",
       password,
+      wallet: 1000000.0,
       role: "DEV",
     },
   });
