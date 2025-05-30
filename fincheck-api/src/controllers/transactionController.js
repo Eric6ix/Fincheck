@@ -149,21 +149,32 @@ export const updateTransaction = async (req, res) => {
 
 // DELETE: http://localhost:3333/api/transactions/:id
 export const deleteTransaction = async (req, res) => {
+  authMiddleware(req, res, () => {});
   const { id } = req.params;
   const userId = req.user.userId;
 
   try {
-    const existing = await prisma.transaction.findUnique({ where: { id } });
+    const transaction = await prisma.transaction.findUnique({
+      where: { id },
+    });
 
-    if (!existing || existing.userId !== userId) {
-      return res.status(404).json({ error: "Transação não encontrada" });
+    if (!transaction || transaction.userId !== userId) {
+      return res.status(404).json({ error: "Transaction not found" });
     }
 
     await prisma.transaction.delete({ where: { id } });
-    res.json("Deletado com sucesso!");
-    res.status(204).end();
+
+    // Reverte o impacto no wallet
+    await adjustWallet(
+      userId,
+      transaction.amount,
+      transaction.type,
+    );
+
+    res.json({ message: "Transaction deleted" });
   } catch (error) {
-    res.status(500).json({ error: "Erro ao deletar transação" });
+    console.error(error);
+    res.status(500).json({ error: "Error deleting transaction" });
   }
 };
 
