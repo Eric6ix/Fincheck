@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../services/api";
 
@@ -26,7 +26,7 @@ const Register = () => {
       });
       navigate("/");
       alert(`${name} undergone registration successfully!`);
-    } catch (err) {
+    } catch (ererr) {
       setError("Invalid credentials.");
     }
   };

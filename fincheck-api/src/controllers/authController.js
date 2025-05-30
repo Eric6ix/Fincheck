@@ -18,13 +18,10 @@ export const register = async (req, res) => {
         .json({ error: "Password must be at least 5 characters" });
     }
 
-     if (wallet < 0) {
+     if (wallet < 0 || wallet <= 49) {
       return res.status(400).json({ error: "Insufficient funds" });
     }
-    
-    if (wallet > 50) {
-      return res.status(400).json({ error: "Wallet must be at most 50" });
-    }
+
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser)
@@ -35,7 +32,7 @@ export const register = async (req, res) => {
     const user = await prisma.user.create({
       data: { name, email, password: hashedPassword, wallet, role: "user" },
     });
-    res.status(201).json(`successfully registered user ${name}`);
+    res.status(201).json(`successfully registered user ${user.name}`);
   } catch (error) {
     res.status(500).json({ error: "Error by registering user" });
     console.log(error);
