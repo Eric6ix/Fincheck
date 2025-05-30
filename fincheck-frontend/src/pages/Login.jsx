@@ -18,9 +18,8 @@ const Login = () => {
     try {
       const response = await axios.post("/auth/login", { email, password });
       const { token } = response.data;
-      const { name } = response.data.user;
       localStorage.setItem("token", token);
-      alert(`Welcome ${name}`)
+      alert(`Welcome back`);
       navigate("/dashboard");
     } catch (err) {
       setError("Invalid credentials.");

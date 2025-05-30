@@ -4,28 +4,30 @@ import axios from "../services/api";
 
 const Register = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [wallet, setWallet] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [name, setName] = useState("");
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (!email || !password || !name) {
-      return setError("Preencha todos os campos.");
+    if (!email || !password || !name || !wallet) {
+      return setError("fill in all the fields.");
     }
 
     try {
       const response = await axios.post("/auth/register", {
         name,
         email,
+        wallet,
         password,
       });
       navigate("/");
-      alert(`${name} registrado com êxeto`);
+      alert(`${name} undergone registration successfully!`);
     } catch (err) {
-      setError("Credenciais inválidas.");
+      setError("Invalid credentials.");
     }
   };
 
@@ -63,6 +65,16 @@ const Register = () => {
 
           <div>
             <input
+              type="number"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="current balance"
+              value={wallet}
+              onChange={(e) => setWallet(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <input
               type="password"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Password"
@@ -81,7 +93,7 @@ const Register = () => {
           <p className="text-sm text-center mt-4">
             have an account?{" "}
             <a href="/login" className="text-blue-600 hover:underline">
-              Make the login
+              Make the login now!
             </a>
           </p>
         </form>

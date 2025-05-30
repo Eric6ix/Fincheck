@@ -5,7 +5,6 @@ import authRoutes from "./routes/authRoutes.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import exportRoutes from "./routes/exportRoutes.js";
-import walletRoutes from "./routes/walletRoutes.js";
 
 const app = express();
 
@@ -17,7 +16,6 @@ app.use(express.json());
 app.use(cors());
 app.use(express.json());
 app.use("/api/user", userRoutes);
-app.use("/api/wallet", walletRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/export", exportRoutes);
 

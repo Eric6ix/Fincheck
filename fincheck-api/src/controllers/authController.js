@@ -17,10 +17,13 @@ export const register = async (req, res) => {
         .status(400)
         .json({ error: "Password must be at least 5 characters" });
     }
-    if (wallet < 49) {
-      return res
-        .status(400)
-        .json({ error: "Wallet must be at most 50" });
+
+     if (wallet < 0) {
+      return res.status(400).json({ error: "Insufficient funds" });
+    }
+    
+    if (wallet > 50) {
+      return res.status(400).json({ error: "Wallet must be at most 50" });
     }
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -55,15 +58,18 @@ export const login = async (req, res) => {
       return res.status(400).json({ error: "Credenciais inválidas" });
 
     const token = jwt.sign(
-      { userId: user.id, 
-        userName: user.name, 
-        userEmail: user.email, 
-        userRole: user.role, 
-        userWallet: user.wallet }, process.env.JWT_SECRET,
+      {
+        userId: user.id,
+        userName: user.name,
+        userEmail: user.email,
+        userRole: user.role,
+        userWallet: user.wallet,
+      },
+      process.env.JWT_SECRET,
       { expiresIn: "30d" }
     );
 
-    res.json({token});
+    res.json({ token });
   } catch (error) {
     res.status(500).json({ error: "Erro ao fazer login" });
   }
