@@ -179,10 +179,11 @@ export const deleteTransaction = async (req, res) => {
 };
 
 export const getSummary = async (req, res) => {
+  authMiddleware(req, res, () => {});
   const userId = req.user.userId;
 
   try {
-    const [entry, outlet] = await Promise.all([
+    const [entrySum, outletSum] = await Promise.all([
       prisma.transaction.aggregate({
         _sum: { amount: true },
         where: { userId, type: "Entry" },
@@ -193,8 +194,8 @@ export const getSummary = async (req, res) => {
       }),
     ]);
 
-    const entryTotal = entry._sum.amount || 0;
-    const outletTotal = outlet._sum.amount || 0;
+    const entryTotal = entrySum._sum.amount || 0;
+    const outletTotal = outletSum._sum.amount || 0;
     const wallet = entryTotal - outletTotal;
 
     res.json({
@@ -203,10 +204,11 @@ export const getSummary = async (req, res) => {
       wallet,
     });
   } catch (error) {
-    console.error(error);
+    console.error("[getSummary]", error);
     res.status(500).json({ error: "Error generating summary" });
   }
 };
+
 
 export const exportTransactionsPDF = async (req, res) => {
   const userId = req.user.userId;
@@ -215,7 +217,7 @@ export const exportTransactionsPDF = async (req, res) => {
   try {
     const transactions = await prisma.transaction.findMany({
       where: { userId, name },
-      include: { category: true },
+      include: { categoryType: true },
       orderBy: { createdAt: "desc" },
     });
 
@@ -252,16 +254,15 @@ export const exportTransactionsCSV = async (req, res) => {
   try {
     const transactions = await prisma.transaction.findMany({
       where: { userId },
-      include: { category: true },
+      include: { categoryType: true },
       orderBy: { createdAt: "desc" },
     });
 
-    // Mapeia os dados no formato que será exportado
     const csvData = transactions.map((tx) => ({
       Título: tx.title,
       Valor: tx.amount.toFixed(2),
-      Tipo: tx.type === "entry" ? "Entrada" : "Saída",
-      Categoria: tx.category?.name || "Sem categoria",
+      Tipo: tx.type === "Entry" ? "Entrada" : "Saída",
+      Categoria: tx.categoryType?.name || "Sem categoria",
       Data: new Date(tx.createdAt).toLocaleDateString("pt-BR"),
     }));
 
