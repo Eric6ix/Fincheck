@@ -21,12 +21,12 @@ const Register = () => {
       const response = await axios.post("/auth/register", {
         name,
         email,
-        wallet,
+        wallet : parseFloat(wallet),
         password,
       });
       navigate("/");
       alert(`${name} undergone registration successfully!`);
-    } catch (ererr) {
+    } catch (error) {
       setError("Invalid credentials.");
     }
   };
