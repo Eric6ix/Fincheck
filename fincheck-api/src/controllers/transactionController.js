@@ -1,7 +1,7 @@
 import { prisma } from "../lib/prisma.js";
 import PDFDocument from "pdfkit";
 import { Parser } from "json2csv";
-import { hasSufficientBalance, adjustWallet, getWallet } from "./walletController.js";
+import { hasSufficientBalance, adjustWallet } from "./userController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 export const createTransaction = async (req, res) => {

@@ -8,7 +8,6 @@ import SummaryCards from "../components/SummaryCards";
 import TransactionTable from "../components/TransactionTable";
 import TransactionForm from "../components/TransactionForm";
 import EditTransactionModal from "../components/EditTransactionModal";
-import Sidebar from "../components/Sidebar";
 import { handleExportCSV, handleExportPDF } from "../context/exportPDFendCSV";
 import api from "../services/api";
 
@@ -92,16 +91,21 @@ const Dashboard = () => {
   };
 
   const handleDeleteTransaction = async (id) => {
-    try {
-      await deleteTransaction(id);
-      setTransaction((prev) => prev.filter((tx) => tx.id !== id));
-      fetchTransactions;
-      setTransaction(updated);
-      CalculateSummary(updated);
-    } catch (error) {
-      console.error("Erro when delet transaction:", error);
-    }
+   const confirmed = window.confirm("Are you sure you want to delete this transaction?");
+if (confirmed) {
+      try {
+          await deleteTransaction(id);
+          setTransaction((prev) => prev.filter((tx) => tx.id !== id));
+          fetchTransactions;
+          setTransaction(updated);
+          CalculateSummary(updated);
+        } catch (error) {
+          console.error("Erro when delet transaction:", error);
+        }
+      };
   };
+
+   
 
   const handleOpenModal = (transaction) => {
     setTransactionSelected(transaction);
@@ -109,6 +113,7 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
+    alert("You have been logged out");
     localStorage.removeItem("token");
     window.location.href = "/";
   };
