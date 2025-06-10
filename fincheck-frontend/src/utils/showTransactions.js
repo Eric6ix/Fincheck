@@ -1,6 +1,6 @@
 import { getTransactions } from "../services/transactions";
 
-const FetchTransactionsUtil = async () => {
+const fetchTransactionsUtil = async () => {
   try {
     const data = await getTransactions();
     if (data && Array.isArray(data)) {
@@ -10,7 +10,8 @@ const FetchTransactionsUtil = async () => {
     }
   } catch (err) {
     console.error("Error fetching transactions:", err.message);
+    return null;
   }
 };
 
-export default FetchTransactionsUtil;
+export default fetchTransactionsUtil;

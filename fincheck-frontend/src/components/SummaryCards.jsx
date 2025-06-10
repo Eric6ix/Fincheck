@@ -9,7 +9,7 @@ const SummaryCards = ({ summary }) => {
           <FaArrowDown className="text-green-500 text-xl" />
         </div>
         <h2 className="text-2xl font-bold text-green-600 mt-2">
-          R$ {summary.entry.toFixed(2)}
+          R$ {(summary.entry || 0).toFixed(2)}
         </h2>
       </div>
 
@@ -19,7 +19,7 @@ const SummaryCards = ({ summary }) => {
           <FaArrowUp className="text-red-500 text-xl" />
         </div>
         <h2 className="text-2xl font-bold text-red-600 mt-2">
-          R$ -{summary.outlet.toFixed(2)}
+          R$ -{(summary.outlet || 0).toFixed(2)}
         </h2>
       </div>
 
