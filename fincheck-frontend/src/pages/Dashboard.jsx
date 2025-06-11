@@ -26,16 +26,17 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+  // CALCULATE SUMMARY
+  useEffect(() => {
+    const fetchCalculade = async () => {
+      const data = await fetchTransactionsUtil();
+      const summary = await calculateSummaryUtils(data); 
+      if (summary) setSummary(summary);
+    };
 
-useEffect(() => {
-  const fetchCalculade = async () => {
-    const data = await fetchTransactionsUtil();
-    const summary = await calculateSummaryUtils(data); 
-    if (summary) setSummary(summary);
-  };
-
-  fetchCalculade();
-}, []);
+    fetchCalculade();
+    
+  }, []);
 
 
 
