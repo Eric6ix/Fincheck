@@ -120,7 +120,6 @@ export const deleteUser = async (req, res) => {
 // Retorna o saldo atual do usuário
 export const getWallet = async (req, res) => {
   req.user;
-  console.log(req.user);
   try {
     const userEmail = req.user.userEmail;
     // Verifica se o usuário está autenticado
@@ -161,7 +160,6 @@ if (type === "Entry") {
   throw new Error("Invalid transaction type");
 }
 
-  // Atualiza a carteira do usuário
   await prisma.user.update({
     where: { id: userId },
     data: {

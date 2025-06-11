@@ -1,3 +1,3 @@
 fazer o isolamneto de todas as funções do dashbord 
 
-#parei na CalculateSummary, ainda não completa, fazer o acrécimo da walletUser no cartão CalculateSummary
+#concertar addtransaction no front

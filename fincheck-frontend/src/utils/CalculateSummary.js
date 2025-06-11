@@ -5,7 +5,6 @@ const calculateSummaryUtils = async (data) => {
   try {
     const walletUser = await fetchWalletUserInfo();
      const wallet = walletUser.wallet;
-   
     const entry = data
       .filter((t) => t.type === "Entry")
       .reduce((acc, t) => acc + parseFloat(t.amount), 0);
@@ -13,8 +12,7 @@ const calculateSummaryUtils = async (data) => {
     const outlet = data
       .filter((t) => t.type === "Outlet")
       .reduce((acc, t) => acc + parseFloat(t.amount), 0);
-
-    
+  
     return { entry, outlet, wallet };
 
   } catch (err) {
