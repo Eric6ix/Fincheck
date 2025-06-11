@@ -119,12 +119,8 @@ export const deleteUser = async (req, res) => {
 
 // Retorna o saldo atual do usuário
 export const getWallet = async (req, res) => {
-  const token = req.header("Authorization");
-  
-  if (!token) return res.status(401).json({ error: "Acesso negado!" });
-  const decoded = authMiddleware(req, res, token);
-  req.user = decoded;
-  
+  req.user;
+  console.log(req.user);
   try {
     const userEmail = req.user.userEmail;
     // Verifica se o usuário está autenticado

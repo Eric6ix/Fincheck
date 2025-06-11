@@ -4,6 +4,7 @@ dotenv.config()
 
 export const authMiddleware = (req, res, next) => {
   const token = req.header('Authorization')
+  console.log('Token:', token)
   if (!token) return res.status(401).json({ error: 'Acesso negado!' })
 
   try {
